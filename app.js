@@ -1,0 +1,563 @@
+/* AI Bel Araby — page logic for home, catalog, course and learn pages */
+(function () {
+  "use strict";
+  const A = window.AIB;
+  const { $, $$, esc, icon, qs, COURSES, SITE, progress } = A;
+  const page = document.body.dataset.page;
+  const featured = COURSES.find((c) => c.featured) || COURSES[0];
+  const courseUrl = (c) => `course.html?id=${encodeURIComponent(c.id)}`;
+  const lessonUrl = (c, l) => `learn.html?c=${encodeURIComponent(c.id)}&l=${encodeURIComponent(l.id)}`;
+  const pad = (n) => String(n).padStart(2, "0");
+
+  function fillIcons(root) { $$("[data-icon]", root).forEach((el) => { el.innerHTML = icon(el.dataset.icon); }); }
+
+  /** Where should "Start / Continue" take the learner? */
+  function resumeTarget(c) {
+    const ls = A.allLessons(c);
+    if (!ls.length) return { href: courseUrl(c), label: "View course", started: false };
+    const p = progress.get(c.id);
+    const started = p.done.length > 0 || !!p.last;
+    let target = ls.find((l) => l.id === p.last);
+    if (!target) target = ls.find((l) => p.done.indexOf(l.id) === -1) || ls[0];
+    return { href: lessonUrl(c, target), label: started ? "Continue learning" : "Start learning", started, lesson: target };
+  }
+
+  /* ================= HOME ================= */
+  function home() {
+    A.header("home");
+    A.footer();
+    fillIcons(document);
+    if (!featured) return;
+    const st = A.courseStats(featured);
+    const go = resumeTarget(featured);
+
+    $("#heroStart").href = courseUrl(featured);
+    $("#ctaStart").href = go.href;
+
+    $("#heroMeta").innerHTML = [
+      ["spark", "100% free"],
+      ["globe", "Explained in Arabic"],
+      ["lab", "Hands-on Colab labs"],
+      ["target", "Progress tracking"]
+    ].map(([i, t]) => `<span>${icon(i)}${t}</span>`).join("");
+
+    const mods = featured.modules || [];
+    $("#heroCard").innerHTML = `
+      <div class="hc-top">
+        <span class="hc-badge"><span class="pulse"></span> Now open</span>
+        <span class="chip chip-dark">${esc(featured.level || "")}</span>
+      </div>
+      <h3>${esc(featured.title)}</h3>
+      <p>${esc(featured.subtitle || "")}</p>
+      <div class="hc-modules">
+        ${mods.slice(0, 5).map((m, i) => `<div><span class="n">${pad(i)}</span>${esc(m.title)}</div>`).join("")}
+        ${mods.length > 5 ? `<div><span class="n">+${mods.length - 5}</span><span style="color:rgba(255,255,255,.5)">more modules</span></div>` : ""}
+      </div>
+      <div class="hc-stats">
+        <div><b>${st.modules}</b><span>Modules</span></div>
+        <div><b>${st.lessons}</b><span>Lectures</span></div>
+        <div><b>${st.labs}</b><span>Labs</span></div>
+      </div>
+      <a class="btn btn-primary" style="width:100%" href="${courseUrl(featured)}">View course ${icon("arrow")}</a>`;
+
+    const words = ["Machine Learning", "Genomics", "Protein Design", "Drug Discovery", "Single-Cell", "Bioimaging", "Deep Learning", "LLMs for Science", "Biotechnology"];
+    $("#ticker").innerHTML = words.concat(words).map((w) => `<span>${w}</span>`).join("");
+
+    const all = COURSES.map(A.courseStats);
+    const sum = (k) => all.reduce((a, s) => a + s[k], 0);
+    $("#stats").innerHTML = `
+      <div class="stat"><b>${sum("modules")}</b><span>In-depth modules</span></div>
+      <div class="stat"><b>${sum("lessons")}</b><span>Lectures & labs</span></div>
+      <div class="stat"><b>${sum("labs")}</b><span>Hands-on labs</span></div>
+      <div class="stat"><b><em>Free</em></b><span>For every learner, always</span></div>`;
+
+    const p = progress.percent(featured);
+    $("#featuredCourse").innerHTML = `
+      <article class="featured">
+        <div class="featured-visual">
+          <canvas id="featCanvas" aria-hidden="true"></canvas>
+          <div class="fv-label">
+            <img src="assets/img/logo-light.png" alt="" width="120" height="54">
+            <span class="mono" style="font-size:.75rem;color:rgba(255,255,255,.55)">COURSE 01</span>
+          </div>
+        </div>
+        <div class="featured-body">
+          <div><span class="chip chip-red">${esc(featured.level || "")}</span> <span class="chip">${esc(featured.price || "Free")}</span></div>
+          <h3>${esc(featured.title)}</h3>
+          ${featured.titleAr ? `<p class="ar" lang="ar" dir="rtl">${esc(featured.titleAr)}</p>` : ""}
+          <p>${esc(featured.subtitle || "")}</p>
+          <div class="meta-row">
+            <span class="chip">${icon("layers")} ${st.modules} modules</span>
+            <span class="chip">${icon("play")} ${st.lessons} lectures</span>
+            <span class="chip">${icon("lab")} ${st.labs} labs</span>
+            ${st.hours ? `<span class="chip">${icon("clock")} ${st.hours}</span>` : ""}
+          </div>
+          ${p > 0 ? `<div style="margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:6px"><span>Your progress</span><span>${p}%</span></div><div class="bar"><i style="width:${p}%"></i></div></div>` : ""}
+          <div class="actions">
+            <a class="btn btn-primary" href="${go.href}">${go.label} ${icon("arrow")}</a>
+            <a class="btn btn-ghost" href="${courseUrl(featured)}#curriculum">See curriculum</a>
+          </div>
+        </div>
+      </article>`;
+
+    const tracks = [
+      ["dna", "Genomics & sequences", "Read DNA and RNA like a language — variant effects, regulatory code and genomic foundation models.", "m3"],
+      ["protein", "Protein structure & design", "How AI predicts structure, what protein language models learn, and designing proteins from scratch.", "m4"],
+      ["pill", "AI-driven drug discovery", "Molecular representations, property prediction, virtual screening and generative chemistry.", "m5"],
+      ["cell", "Single-cell & multi-omics", "From count matrices to cell types, states and integrated views of biology.", "m6"],
+      ["microscope", "Bioimaging & pathology", "Computer vision for microscopy and histopathology, from segmentation to whole slides.", "m7"],
+      ["chat", "LLMs & AI agents in science", "Language models and agents as research tools — and how to use them responsibly.", "m8"]
+    ];
+    $("#trackGrid").innerHTML = tracks.map(([ic, t, d, mid], i) => {
+      const mi = mods.findIndex((m) => m.id === mid);
+      const href = mi > -1 ? `${courseUrl(featured)}#${mid}` : courseUrl(featured);
+      return `<a class="track reveal ${i % 3 === 1 ? "d1" : i % 3 === 2 ? "d2" : ""}" href="${href}">
+        <span class="t-num">${pad(i + 1)}</span>
+        <span class="t-ico">${icon(ic)}</span>
+        <h3>${t}</h3><p>${d}</p>
+        ${mi > -1 ? `<span class="t-mod">MODULE ${pad(mi)} · ${esc(featured.title).toUpperCase()}</span>` : ""}
+      </a>`;
+    }).join("");
+
+    const hero = $("#heroCanvas");
+    window.AIBHelix(hero, window.innerWidth < 960 ? { cx: 0.7, cy: 0.2, angle: -0.35, amp: 0.1, length: 1, particles: 26 } : { cx: 0.615, cy: 0.5, angle: -1.12, length: 1.05, amp: 0.085, turns: 3, pairs: 44 });
+    window.AIBHelix($("#featCanvas"), { cx: 0.5, cy: 0.45, angle: -0.6, amp: 0.13, turns: 2.6, pairs: 34, particles: 22, link: 100, seed: 3 });
+    A.reveal();
+  }
+
+  /* ================= CATALOG ================= */
+  function catalog() {
+    A.header("courses");
+    A.footer();
+    const grid = $("#courseGrid"), input = $("#q"), filt = $("#filters");
+    const tags = Array.from(new Set(COURSES.flatMap((c) => c.tags || [])));
+    let active = "All";
+    filt.innerHTML = ["All"].concat(tags).map((t) => `<button class="filter ${t === "All" ? "is-on" : ""}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+    filt.addEventListener("click", (e) => {
+      const b = e.target.closest(".filter"); if (!b) return;
+      active = b.dataset.t;
+      $$(".filter", filt).forEach((x) => x.classList.toggle("is-on", x === b));
+      render();
+    });
+    input.addEventListener("input", render);
+    const pre = qs("q"); if (pre) input.value = pre;
+
+    function card(c, i) {
+      const st = A.courseStats(c), p = progress.percent(c), go = resumeTarget(c);
+      const soon = c.status === "soon";
+      return `<article class="ccard reveal">
+        <a class="ccard-cover" href="${courseUrl(c)}" aria-label="${esc(c.title)}">
+          <canvas data-seed="${i + 2}" aria-hidden="true"></canvas>
+          <span class="cc-tag chip ${soon ? "chip-dark" : "chip-red"}">${soon ? "Coming soon" : esc(c.level || "Course")}</span>
+          <span class="cc-title">${esc(c.title)}</span>
+        </a>
+        <div class="ccard-body">
+          <p>${esc(c.subtitle || "")}</p>
+          <div class="ccard-meta">
+            <span>${icon("layers")}${st.modules} modules</span>
+            <span>${icon("play")}${st.lessons} lectures</span>
+            ${st.hours ? `<span>${icon("clock")}${st.hours}</span>` : ""}
+          </div>
+          ${p > 0 ? `<div class="bar" title="${p}% complete"><i style="width:${p}%"></i></div>` : ""}
+          <div class="ccard-foot">
+            <span class="price">${esc(c.price || "Free")}</span>
+            <a class="btn btn-dark btn-sm" href="${soon ? courseUrl(c) : p > 0 ? go.href : courseUrl(c)}">${soon ? "Details" : p > 0 ? "Continue" : "View course"} ${icon("arrow")}</a>
+          </div>
+        </div>
+      </article>`;
+    }
+    function render() {
+      const q = input.value.trim().toLowerCase();
+      const list = COURSES.filter((c) => {
+        if (active !== "All" && (c.tags || []).indexOf(active) === -1) return false;
+        if (!q) return true;
+        const hay = [c.title, c.titleAr, c.subtitle, c.description, (c.tags || []).join(" ")]
+          .concat(A.allLessons(c).map((l) => l.title)).concat((c.modules || []).map((m) => m.title)).join(" ").toLowerCase();
+        return hay.indexOf(q) > -1;
+      });
+      grid.innerHTML = list.length
+        ? list.map(card).join("") + (q || active !== "All" ? "" : `<div class="ccard soon reveal">${icon("spark")}<h3>More courses on the way</h3><p class="muted" style="margin-top:8px;max-width:260px">New courses on AI in science are in production. Follow us to hear first.</p></div>`)
+        : `<div class="empty">No courses match “${esc(q)}”. Try another keyword.</div>`;
+      $$(".ccard-cover canvas", grid).forEach((cv) => window.AIBHelix(cv, { cx: 0.62, cy: 0.42, angle: -0.5, amp: 0.13, turns: 2.4, pairs: 28, particles: 16, link: 90, interactive: false, seed: +cv.dataset.seed }));
+      A.reveal();
+    }
+    render();
+  }
+
+  /* ================= COURSE DETAIL ================= */
+  function course() {
+    A.header("courses");
+    A.footer();
+    const root = $("#courseRoot");
+    const c = A.getCourse(qs("id")) || featured;
+    if (!c) { root.innerHTML = `<div class="wrap section"><div class="empty">Course not found. <a href="courses.html" style="color:var(--red)">Browse all courses</a>.</div></div>`; return; }
+    document.title = `${c.title} — ${SITE.name}`;
+    const st = A.courseStats(c);
+    const go = resumeTarget(c);
+    const p = progress.get(c.id);
+    const pct = progress.percent(c);
+    const ls = A.allLessons(c);
+    const mats = ls.flatMap((l) => (l.materials || []).map((m) => Object.assign({ lesson: l }, m)));
+
+    const lessonRow = (l, idx) => {
+      const done = p.done.indexOf(l.id) > -1;
+      const pub = A.isPublished(l);
+      return `<a class="lesson-row ${done ? "done" : ""}" href="${lessonUrl(c, l)}">
+        <span class="l-ico">${icon(done ? "check" : A.typeIcon(l.type))}</span>
+        <span>${esc(l.title)}</span>
+        <span class="l-meta">
+          ${l.type === "lab" ? `<span class="lab">Lab</span>` : ""}
+          ${!pub ? `<span class="soon">Soon</span>` : ""}
+          ${l.duration ? `<span>${esc(l.duration)}</span>` : ""}
+          ${(l.materials || []).length ? `<span title="Materials">${icon("file")}${l.materials.length}</span>` : ""}
+        </span>
+      </a>`;
+    };
+
+    root.innerHTML = `
+      <section class="page-head course-hero">
+        <div class="wrap">
+          <div class="crumbs"><a href="index.html">Home</a>${icon("chevron")}<a href="courses.html">Courses</a>${icon("chevron")}<span>${esc(c.title)}</span></div>
+          <h1>${esc(c.title)}</h1>
+          ${c.titleAr ? `<p class="ar-title" lang="ar" dir="rtl">${esc(c.titleAr)}</p>` : ""}
+          <p>${esc(c.subtitle || "")}</p>
+          <div class="facts">
+            <span>${icon("target")}${esc(c.level || "")}</span>
+            <span>${icon("layers")}${st.modules} modules</span>
+            <span>${icon("play")}${st.lessons} lectures</span>
+            <span>${icon("lab")}${st.labs} hands-on labs</span>
+            ${st.hours ? `<span>${icon("clock")}${st.hours} of video</span>` : ""}
+            <span>${icon("globe")}${esc(c.language || "")}</span>
+          </div>
+          <div class="tags">${(c.tags || []).map((t) => `<span class="chip chip-dark">${esc(t)}</span>`).join("")}</div>
+        </div>
+      </section>
+
+      <div class="wrap course-layout">
+        <div class="course-main">
+          <nav class="tabs" aria-label="Course sections">
+            <a href="#overview" class="is-on">Overview</a>
+            <a href="#curriculum">Curriculum</a>
+            <a href="#materials">Materials</a>
+            <a href="#instructors">Instructors</a>
+            ${(c.faq || []).length ? `<a href="#course-faq">FAQ</a>` : ""}
+          </nav>
+
+          <section class="panel" id="overview">
+            <h2>About this course</h2>
+            <p>${esc(c.description || "")}</p>
+          </section>
+
+          ${(c.outcomes || []).length ? `<section class="panel">
+            <h2>What you'll learn</h2>
+            <ul class="clean outcomes">${c.outcomes.map((o) => `<li>${icon("check")}<span>${esc(o)}</span></li>`).join("")}</ul>
+          </section>` : ""}
+
+          <section class="panel two-col">
+            <div><h3>Who it's for</h3><ul class="clean plain">${(c.audience || []).map((o) => `<li>${icon("users")}<span>${esc(o)}</span></li>`).join("")}</ul></div>
+            <div><h3>Before you start</h3><ul class="clean plain">${(c.prerequisites || []).map((o) => `<li>${icon("chevron")}<span>${esc(o)}</span></li>`).join("")}</ul></div>
+          </section>
+
+          ${(c.tools || []).length ? `<section class="panel"><h2 style="font-size:1.3rem">Tools you'll use</h2><div class="tools">${c.tools.map((t) => `<span class="chip">${icon("code")} ${esc(t)}</span>`).join("")}</div></section>` : ""}
+
+          <section class="panel" id="curriculum">
+            <div class="cur-head">
+              <div><h2>Curriculum</h2><p class="muted" style="font-size:.92rem;margin-top:4px">${st.modules} modules · ${st.lessons} lectures${st.published < st.lessons ? ` · ${st.published} released so far` : ""}</p></div>
+              <button class="linkbtn" id="toggleAll">Expand all</button>
+            </div>
+            ${(c.modules || []).map((m, i) => `
+              <details class="module" id="${esc(m.id)}" ${i === 0 ? "open" : ""}>
+                <summary>
+                  <span class="m-num">${pad(i)}</span>
+                  <span><div class="m-title">${esc(m.title)}</div>${m.summary ? `<div class="m-sub">${esc(m.summary)}</div>` : ""}</span>
+                  <span class="m-right"><span class="count">${(m.lessons || []).length} lectures</span>${icon("chevronDown", "chev")}</span>
+                </summary>
+                ${(m.lessons || []).map(lessonRow).join("")}
+              </details>`).join("")}
+          </section>
+
+          <section class="panel" id="materials">
+            <h2>Course materials</h2>
+            ${mats.length ? `<div class="mats">${mats.map((m) => `
+              <a class="mat" href="${esc(A.materialLink(m.url))}" target="_blank" rel="noopener">
+                <span class="m-ic">${icon(A.matIcon(m.type))}</span>
+                <span><b>${esc(m.label || "Material")}</b><small>${esc(m.lesson.title)}${m.size ? " · " + esc(m.size) : ""}</small></span>
+                <span class="dl">${icon("download")}</span>
+              </a>`).join("")}</div>`
+              : `<p>Slides, papers, datasets and notebooks will appear here as each lecture is released.</p>`}
+          </section>
+
+          <section class="panel" id="instructors">
+            <h2>Instructors</h2>
+            <div style="display:grid;gap:22px">
+            ${(c.instructors || []).map((ins) => `
+              <div class="instructor">
+                <div class="avatar ${ins.photo ? "" : "mark"}"><img src="${esc(ins.photo || "assets/img/mark-light.png")}" alt="${esc(ins.name)}"></div>
+                <div><b style="font-size:1.08rem">${esc(ins.name)}</b><div class="muted" style="font-size:.9rem">${esc(ins.role || "")}</div><p class="muted" style="margin-top:6px;font-size:.95rem">${esc(ins.bio || "")}</p></div>
+              </div>`).join("")}
+            </div>
+          </section>
+
+          ${(c.faq || []).length ? `<section class="panel" id="course-faq"><h2>Course FAQ</h2><div class="faq" style="max-width:none">${c.faq.map((f) => `<details><summary>${esc(f.q)} ${icon("plus")}</summary><div class="ans">${esc(f.a)}</div></details>`).join("")}</div></section>` : ""}
+        </div>
+
+        <aside class="side">
+          <div class="side-card">
+            <a class="side-preview" href="${go.href}" aria-label="${go.label}">
+              <canvas id="sideCanvas" aria-hidden="true"></canvas>
+              <span class="play-btn"><svg class="ico" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg></span>
+            </a>
+            <div class="side-body">
+              <div class="price-big">${esc(c.price || "Free")}<small>full access</small></div>
+              <a class="btn btn-primary btn-lg" href="${go.href}">${go.label} ${icon("arrow")}</a>
+              ${go.started ? `<p class="muted" style="font-size:.85rem;margin-top:10px">Up next: ${esc(go.lesson ? go.lesson.title : "")}</p>` : ""}
+              <div class="side-prog">
+                <div class="row"><span>Your progress</span><span>${pct}% · ${p.done.length}/${st.lessons}</span></div>
+                <div class="bar"><i style="width:${pct}%"></i></div>
+              </div>
+              <div class="includes">
+                <div>${icon("play")}${st.lessons} lectures & labs</div>
+                <div>${icon("download")}Downloadable slides & datasets</div>
+                <div>${icon("notes")}Personal notes for every lecture</div>
+                <div>${icon("globe")}Watch on any device</div>
+                <div>${icon("spark")}Free, no account needed</div>
+              </div>
+              <div class="share-row">
+                <button class="btn btn-ghost btn-sm" id="copyLink">${icon("link")} Copy link</button>
+                ${navigator.share ? `<button class="btn btn-ghost btn-sm" id="shareBtn">${icon("arrow")} Share</button>` : ""}
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+      <div style="height:80px"></div>`;
+
+    window.AIBHelix($("#sideCanvas"), { cx: 0.5, cy: 0.5, angle: -0.45, amp: 0.15, turns: 2.2, pairs: 26, particles: 14, link: 80, seed: 7 });
+
+    // expand all
+    const tg = $("#toggleAll");
+    tg.addEventListener("click", () => {
+      const ds = $$(".module", root), anyClosed = ds.some((d) => !d.open);
+      ds.forEach((d) => (d.open = anyClosed));
+      tg.textContent = anyClosed ? "Collapse all" : "Expand all";
+    });
+    // open a module from #hash
+    const openHash = () => { const h = decodeURIComponent(location.hash.slice(1)); const d = h && document.getElementById(h); if (d && d.tagName === "DETAILS") { d.open = true; setTimeout(() => d.scrollIntoView({ behavior: "smooth", block: "start" }), 50); } };
+    openHash(); window.addEventListener("hashchange", openHash);
+
+    // tabs scroll-spy
+    const tabs = $$(".tabs a", root);
+    const secs = tabs.map((a) => document.getElementById(a.getAttribute("href").slice(1))).filter(Boolean);
+    const spy = () => {
+      let cur = secs[0];
+      secs.forEach((s) => { if (s.getBoundingClientRect().top < 180) cur = s; });
+      tabs.forEach((a) => a.classList.toggle("is-on", a.getAttribute("href") === "#" + cur.id));
+    };
+    window.addEventListener("scroll", spy, { passive: true }); spy();
+
+    $("#copyLink").addEventListener("click", () => {
+      const url = location.href.split("#")[0];
+      (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => A.toast("Link copied"), () => A.toast(url));
+    });
+    const sb = $("#shareBtn");
+    if (sb) sb.addEventListener("click", () => navigator.share({ title: c.title, text: c.subtitle, url: location.href.split("#")[0] }).catch(() => {}));
+    // style.css scroll-margin for anchors
+    $$(".panel, .module", root).forEach((s) => (s.style.scrollMarginTop = "150px"));
+  }
+
+  /* ================= LEARN (player) ================= */
+  function learn() {
+    const c = A.getCourse(qs("c")) || featured;
+    const app = $("#learnApp");
+    if (!c) { app.innerHTML = `<div style="padding:60px;text-align:center">Course not found. <a href="courses.html" style="color:var(--red-300)">Browse courses</a></div>`; return; }
+    const ls = A.allLessons(c);
+    if (!ls.length) { location.replace(courseUrl(c)); return; }
+    let idx = Math.max(0, ls.findIndex((l) => l.id === qs("l")));
+    let filter = "";
+    const notesKey = (lid) => `aib:notes:${c.id}:${lid}`;
+
+    app.innerHTML = `
+      <header class="p-top">
+        <a class="p-back" href="${courseUrl(c)}" title="Back to course">${icon("left")}<img src="assets/img/mark-light.png" alt="" width="30" height="34"><span class="p-ctitle">${esc(c.title)}</span></a>
+        <div class="p-prog"><span id="progText"></span><div class="bar dark"><i id="progBar"></i></div></div>
+        <button class="p-iconbtn" id="sideToggle" aria-label="Toggle curriculum" title="Curriculum">${icon("list")}</button>
+      </header>
+      <div class="p-body">
+        <main class="p-main">
+          <div class="stage" id="stage"></div>
+          <div class="p-under">
+            <div class="p-lhead">
+              <div>
+                <span class="eyebrow light" id="lEyebrow"></span>
+                <h1 id="lTitle"></h1>
+                <div class="p-lmeta" id="lMeta"></div>
+              </div>
+              <div class="p-actions">
+                <button class="btn btn-ghost-light btn-sm" id="prevBtn" title="Previous (P)">${icon("left")} Prev</button>
+                <button class="btn btn-primary btn-sm" id="doneBtn" title="Mark complete (M)"></button>
+                <button class="btn btn-ghost-light btn-sm" id="nextBtn" title="Next (N)">Next ${icon("chevron")}</button>
+              </div>
+            </div>
+            <div class="p-tabs" role="tablist">
+              <button role="tab" data-tab="ov" class="is-on">Overview</button>
+              <button role="tab" data-tab="mat" id="matTab">Materials</button>
+              <button role="tab" data-tab="notes">My notes</button>
+            </div>
+            <section class="p-panel" data-panel="ov" id="pOverview"></section>
+            <section class="p-panel" data-panel="mat" id="pMaterials" hidden></section>
+            <section class="p-panel" data-panel="notes" hidden>
+              <textarea id="myNotes" placeholder="Write your notes for this lecture… they are saved automatically on this device."></textarea>
+              <div class="notes-bar"><span class="muted-light" id="noteState">Saved locally</span><button class="btn btn-ghost-light btn-sm" id="exportNotes">${icon("download")} Export all my notes</button></div>
+            </section>
+            <p class="kbd-hint">${icon("keyboard")} Shortcuts: <kbd>N</kbd> next · <kbd>P</kbd> previous · <kbd>M</kbd> mark complete</p>
+          </div>
+        </main>
+        <aside class="p-side" id="pSide">
+          <div class="p-side-head">
+            <b>Course content</b>
+            <div class="p-search">${icon("search")}<input id="lessonFilter" placeholder="Search lectures" aria-label="Search lectures"></div>
+          </div>
+          <div class="p-list" id="pList"></div>
+        </aside>
+      </div>`;
+
+    const side = $("#pSide");
+    $("#sideToggle").addEventListener("click", () => document.body.classList.toggle("side-collapsed"));
+    if (window.innerWidth < 1000) document.body.classList.add("side-collapsed");
+
+    $$(".p-tabs button").forEach((b) => b.addEventListener("click", () => {
+      $$(".p-tabs button").forEach((x) => x.classList.toggle("is-on", x === b));
+      $$(".p-panel").forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.tab));
+    }));
+
+    $("#lessonFilter").addEventListener("input", (e) => { filter = e.target.value.trim().toLowerCase(); renderList(); });
+
+    const ta = $("#myNotes");
+    let saveT;
+    ta.addEventListener("input", () => {
+      $("#noteState").textContent = "Saving…";
+      clearTimeout(saveT);
+      saveT = setTimeout(() => { A.store.set(notesKey(ls[idx].id), ta.value); $("#noteState").textContent = "Saved locally"; }, 400);
+    });
+    $("#exportNotes").addEventListener("click", () => {
+      let out = `${c.title} — my notes\n${"=".repeat(40)}\n\n`;
+      ls.forEach((l) => { const n = A.store.get(notesKey(l.id), ""); if (n) out += `■ ${l._m.title} › ${l.title}\n${n}\n\n`; });
+      const blob = new Blob([out], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${c.id}-notes.txt`; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+
+    $("#prevBtn").addEventListener("click", () => go(idx - 1));
+    $("#nextBtn").addEventListener("click", () => go(idx + 1));
+    $("#doneBtn").addEventListener("click", () => {
+      const now = progress.toggle(c.id, ls[idx].id);
+      A.toast(now ? "Marked as complete ✓" : "Marked as not complete");
+      if (now && idx < ls.length - 1) setTimeout(() => go(idx + 1), 500);
+      else update();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (/input|textarea|select/i.test(e.target.tagName) || e.metaKey || e.ctrlKey || e.altKey) return;
+      const k = e.key.toLowerCase();
+      if (k === "n") go(idx + 1); else if (k === "p") go(idx - 1); else if (k === "m") $("#doneBtn").click();
+    });
+    window.addEventListener("popstate", () => { const i = ls.findIndex((l) => l.id === qs("l")); if (i > -1) { idx = i; render(); } });
+
+    function go(i) {
+      if (i < 0 || i >= ls.length || i === idx) return;
+      idx = i;
+      history.pushState(null, "", lessonUrl(c, ls[idx]));
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (window.innerWidth < 1000) document.body.classList.add("side-collapsed");
+    }
+
+    function renderStage(l) {
+      const stage = $("#stage");
+      const v = A.parseVideo(l.video);
+      if (!v) {
+        stage.innerHTML = `<div class="stage-empty"><canvas id="stageCanvas" aria-hidden="true"></canvas>
+          <div class="se-inner"><span class="eyebrow light">${l.type === "lab" ? "Hands-on lab" : "Lecture"}</span>
+          <h2>${A.isPublished(l) ? "Read the notes & materials below" : "This lecture is coming soon"}</h2>
+          <p>${A.isPublished(l) ? "This lesson has no video — open the materials tab." : "It will appear right here as soon as it's released."}</p></div></div>`;
+        window.AIBHelix($("#stageCanvas"), { cx: 0.5, cy: 0.5, angle: -0.3, amp: 0.12, turns: 3, pairs: 40, particles: 30, seed: idx + 4 });
+        return;
+      }
+      if (v.provider === "file") {
+        stage.innerHTML = `<video controls playsinline preload="metadata" src="${esc(v.src)}"></video>`;
+        $("video", stage).addEventListener("ended", () => { if (!progress.isDone(c.id, l.id)) { progress.toggle(c.id, l.id, true); A.toast("Lecture complete ✓"); update(); } });
+      } else {
+        stage.innerHTML = `<iframe src="${esc(v.embed)}" title="${esc(l.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" loading="lazy"></iframe>`;
+      }
+    }
+
+    function renderList() {
+      const p = progress.get(c.id);
+      let html = "", n = 0;
+      (c.modules || []).forEach((m, mi) => {
+        const rows = (m.lessons || []).map((l) => {
+          const gi = n++;
+          if (filter && (l.title + " " + m.title).toLowerCase().indexOf(filter) === -1) return "";
+          const done = p.done.indexOf(l.id) > -1;
+          return `<a class="p-item ${gi === idx ? "is-cur" : ""} ${done ? "done" : ""}" href="${lessonUrl(c, l)}" data-i="${gi}">
+            <span class="p-check">${icon(done ? "check" : A.typeIcon(l.type))}</span>
+            <span class="p-it">${esc(l.title)}${!A.isPublished(l) ? ` <em>soon</em>` : ""}</span>
+            ${l.duration ? `<span class="p-dur">${esc(l.duration)}</span>` : ""}
+          </a>`;
+        }).join("");
+        if (!rows) return;
+        const doneCount = (m.lessons || []).filter((l) => p.done.indexOf(l.id) > -1).length;
+        html += `<div class="p-mod"><div class="p-mod-h"><span class="mono">${pad(mi)}</span><span>${esc(m.title)}</span><small>${doneCount}/${(m.lessons || []).length}</small></div>${rows}</div>`;
+      });
+      $("#pList").innerHTML = html || `<p class="muted-light" style="padding:20px">No lectures match.</p>`;
+      $$(".p-item", side).forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); go(+a.dataset.i); }));
+      const cur = $(".p-item.is-cur", side);
+      if (cur && !filter) cur.scrollIntoView({ block: "nearest" });
+    }
+
+    function update() {
+      const l = ls[idx];
+      const done = progress.isDone(c.id, l.id);
+      const db = $("#doneBtn");
+      db.innerHTML = done ? `${icon("check")} Completed` : `${icon("check")} Mark complete`;
+      db.classList.toggle("is-done", done);
+      const pct = progress.percent(c);
+      $("#progText").textContent = `${progress.get(c.id).done.filter((id) => ls.some((x) => x.id === id)).length}/${ls.length} · ${pct}%`;
+      $("#progBar").style.width = pct + "%";
+      renderList();
+    }
+
+    function render() {
+      const l = ls[idx];
+      progress.setLast(c.id, l.id);
+      document.title = `${l.title} — ${c.title}`;
+      renderStage(l);
+      $("#lEyebrow").textContent = `Module ${pad(l._mi)} · ${l._m.title}`;
+      $("#lTitle").textContent = l.title;
+      $("#lMeta").innerHTML = [
+        `<span>${icon(A.typeIcon(l.type))}${A.TYPE_LABEL[l.type] || "Lecture"}</span>`,
+        l.duration ? `<span>${icon("clock")}${esc(l.duration)}</span>` : "",
+        `<span>${icon("list")}Lesson ${idx + 1} of ${ls.length}</span>`
+      ].join("");
+      $("#prevBtn").disabled = idx === 0;
+      $("#nextBtn").disabled = idx === ls.length - 1;
+
+      const notes = (l.notes || "").trim();
+      $("#pOverview").innerHTML = notes
+        ? `<div class="rich">${/<[a-z][\s\S]*>/i.test(notes) ? notes : notes.split(/\n{2,}/).map((pp) => `<p>${esc(pp).replace(/\n/g, "<br>")}</p>`).join("")}</div>`
+        : `<p class="muted-light">${esc(l._m.summary || "Lecture notes will be added here.")}</p>`;
+      const mats = l.materials || [];
+      $("#matTab").textContent = `Materials${mats.length ? ` (${mats.length})` : ""}`;
+      $("#pMaterials").innerHTML = mats.length
+        ? `<div class="mats dark">${mats.map((m) => `<a class="mat" href="${esc(A.materialLink(m.url))}" target="_blank" rel="noopener"><span class="m-ic">${icon(A.matIcon(m.type))}</span><span><b>${esc(m.label || "Material")}</b><small>${esc((m.type || "file").toUpperCase())}${m.size ? " · " + esc(m.size) : ""}</small></span><span class="dl">${icon("download")}</span></a>`).join("")}</div>`
+        : `<p class="muted-light">No downloadable materials for this lecture yet.</p>`;
+      ta.value = A.store.get(notesKey(l.id), "");
+      update();
+    }
+    render();
+  }
+
+  /* ================= 404 ================= */
+  function notfound() { A.header(""); A.footer(); }
+
+  ({ home, catalog, course, learn, notfound }[page] || function () {})();
+})();
