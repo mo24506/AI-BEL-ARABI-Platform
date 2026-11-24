@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Studio — AI Bel Araby</title>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    body { background: var(--paper-2); }
+    .st-top { position: sticky; top: 0; z-index: 20; background: var(--ink); color: #fff; }
+    .st-top .wrap { display: flex; align-items: center; gap: 16px; height: 66px; }
+    .st-top img { height: 34px; width: auto; }
+    .st-top .ttl { font-family: var(--f-display); font-weight: 700; font-size: 1.1rem; }
+    .st-top .ttl small { font-family: var(--f-mono); font-weight: 400; font-size: .7rem; letter-spacing: .12em; color: var(--red-300); margin-left: 8px; }
+    .st-top .sp { flex: 1; }
+    .st-state { font-size: .82rem; color: rgba(255,255,255,.55); font-family: var(--f-mono); }
+    .st-grid { display: grid; grid-template-columns: 280px 1fr; gap: 28px; padding: 28px 0 80px; align-items: start; }
+    .st-nav { position: sticky; top: 92px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; }
+    .st-nav h4 { font-family: var(--f-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 8px 6px 10px; font-weight: 500; }
+    .st-nav button.ci { display: block; width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px; border: 0; background: none; font-weight: 500; font-size: .92rem; }
+    .st-nav button.ci:hover { background: var(--paper); }
+    .st-nav button.ci.on { background: var(--ink); color: #fff; }
+    .st-nav .sep { height: 1px; background: var(--line); margin: 14px 0; }
+    .st-nav a.jump { display: block; padding: 7px 12px; font-size: .88rem; color: var(--muted); border-radius: 8px; }
+    .st-nav a.jump:hover { color: var(--text); background: var(--paper); }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px; margin-bottom: 22px; }
+    .card > h2 { font-size: 1.45rem; margin-bottom: 4px; }
+    .card > .hint { color: var(--muted); font-size: .9rem; margin-bottom: 22px; }
+    .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .fg .full { grid-column: 1 / -1; }
+    label.f { display: grid; gap: 6px; font-size: .82rem; font-weight: 600; color: var(--text); }
+    label.f span.h { font-weight: 400; color: var(--muted); }
+    .f input, .f textarea, .f select, .in { font: inherit; font-size: .93rem; font-weight: 400; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text); width: 100%; }
+    .f textarea { min-height: 90px; resize: vertical; line-height: 1.55; }
+    .f input:focus, .f textarea:focus, .f select:focus, .in:focus { outline: none; border-color: var(--red); background: #fff; box-shadow: 0 0 0 3px rgba(191,24,42,.12); }
+    .mod { border: 1px solid var(--line); border-radius: var(--r); margin-bottom: 16px; background: var(--paper); }
+    .mod-h { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 14px; border-bottom: 1px solid var(--line); background: var(--white); border-radius: var(--r) var(--r) 0 0; }
+    .mod-h .num { width: 34px; height: 34px; border-radius: 9px; background: var(--red); color: #fff; display: grid; place-items: center; font-family: var(--f-mono); font-size: .78rem; }
+    .mod-b { padding: 14px; }
+    .tools-row { display: flex; gap: 4px; }
+    .ib { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--white); display: grid; place-items: center; color: var(--muted); }
+    .ib:hover { color: var(--text); border-color: var(--text); }
+    .ib.del:hover { color: #fff; background: var(--red); border-color: var(--red); }
+    .ib .ico { width: 16px; height: 16px; }
+    .les { background: var(--white); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; }
+    .les > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px; align-items: center; padding: 12px 14px; }
+    .les > summary::-webkit-details-marker { display: none; }
+    .les .lt { font-weight: 500; font-size: .93rem; }
+    .badge { font-family: var(--f-mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+    .badge.ok { background: #e7f6ef; color: #0e7a52; border-color: #bfe8d5; }
+    .badge.red { background: var(--red-50); color: var(--red-600); border-color: #f4ccd1; }
+    .les-b { padding: 4px 14px 16px; border-top: 1px solid var(--line); display: grid; gap: 14px; }
+    .mat-row { display: grid; grid-template-columns: 1.2fr 2fr .8fr .7fr auto; gap: 8px; margin-bottom: 8px; }
+    .addbtn { display: inline-flex; align-items: center; gap: 6px; border: 1px dashed var(--muted-2); background: none; padding: 9px 14px; border-radius: 10px; font-size: .88rem; font-weight: 600; color: var(--text); }
+    .addbtn:hover { border-color: var(--red); color: var(--red); }
+    .banner { background: var(--ink); color: #fff; border-radius: var(--r-lg); padding: 22px 26px; margin-bottom: 22px; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .banner p { color: rgba(255,255,255,.7); font-size: .93rem; max-width: 640px; }
+    .banner b { color: #fff; }
+    .modal { position: fixed; inset: 0; background: rgba(15,15,17,.7); display: grid; place-items: center; z-index: 60; padding: 20px; }
+    .modal-box { width: min(900px, 100%); background: var(--ink); border-radius: var(--r-lg); overflow: hidden; }
+    .modal-box .stage { max-height: none; }
+    .modal-box .mb-f { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; color: rgba(255,255,255,.7); font-size: .88rem; gap: 12px; }
+    .vid-line { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    code.k { font-family: var(--f-mono); font-size: .82rem; background: var(--paper-2); padding: 2px 6px; border-radius: 6px; }
+    .helper-out { margin-top: 12px; font-family: var(--f-mono); font-size: .82rem; word-break: break-all; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: none; }
+    @media (max-width: 900px) { .st-grid { grid-template-columns: 1fr; } .st-nav { position: static; } .fg { grid-template-columns: 1fr; } .mat-row { grid-template-columns: 1fr 1fr; } .st-state { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="st-top">
+    <div class="wrap">
+      <a href="index.html"><img src="assets/img/mark-light.png" alt="AI Bel Araby"></a>
+      <span class="ttl">Studio<small>CONTENT MANAGER</small></span>
+      <span class="sp"></span>
+      <span class="st-state" id="saveState">Draft saved in this browser</span>
+      <button class="btn btn-ghost-light btn-sm" id="importBtn" title="Load a courses.js file"></button>
+      <button class="btn btn-primary btn-sm" id="downloadBtn"></button>
+      <input type="file" id="importFile" accept=".js,text/javascript" hidden>
+    </div>
+  </header>
+
+  <div class="wrap st-grid">
+    <aside class="st-nav">
+      <h4>Courses</h4>
+      <div id="courseList"></div>
+      <button class="addbtn" id="addCourse" style="width:100%;margin-top:10px;justify-content:center"></button>
+      <div class="sep"></div>
+      <h4>Jump to</h4>
+      <a class="jump" href="#s-info">Course details</a>
+      <a class="jump" href="#s-cur">Curriculum & lectures</a>
+      <a class="jump" href="#s-site">Site settings</a>
+      <a class="jump" href="#s-help">Link helper</a>
+      <div class="sep"></div>
+      <button class="addbtn" id="discardBtn" style="width:100%;justify-content:center;border-style:solid"></button>
+    </aside>
+
+    <main>
+      <div class="banner">
+        <p><b>How publishing works:</b> edit anything below, then press <b>Download courses.js</b> and replace the file <code class="k" style="background:rgba(255,255,255,.1);color:#fff">assets/js/courses.js</code> in your GitHub repository. The live site updates within a minute. Your edits are kept in this browser until you do.</p>
+        <a class="btn btn-ghost-light btn-sm" id="previewSite" href="courses.html" target="_blank">Open live site</a>
+      </div>
+      <div id="editor"></div>
+
+      <section class="card" id="s-site">
+        <h2>Site settings</h2>
+        <p class="hint">Contact and social links appear automatically in the footer when filled in.</p>
+        <div class="fg" id="siteForm"></div>
+      </section>
+
+      <section class="card" id="s-help">
+        <h2>Link helper</h2>
+        <p class="hint">Paste any video or file link to check what the site will do with it.</p>
+        <div class="vid-line"><input class="in" id="helperIn" placeholder="https://drive.google.com/file/d/…  or  https://youtu.be/…"><button class="btn btn-dark btn-sm" id="helperBtn">Check link</button></div>
+        <div class="helper-out" id="helperOut"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-box">
+      <div class="stage" id="modalStage"></div>
+      <div class="mb-f"><span id="modalInfo"></span><button class="btn btn-ghost-light btn-sm" id="modalClose">Close</button></div>
+    </div>
+  </div>
+
+<script src="assets/js/courses.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/studio.js"></script>
+</body>
+</html>

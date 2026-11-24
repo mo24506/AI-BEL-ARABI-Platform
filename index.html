@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Bel Araby — When AI Meets Biotechnology</title>
+  <meta name="description" content="Free, hands-on courses on AI in science and biotechnology, explained in Arabic. Start with AI Meets Biotech Advanced.">
+  <meta name="theme-color" content="#0f0f11">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI Bel Araby — When AI Meets Biotechnology">
+  <meta property="og:description" content="Free, hands-on courses on AI in science and biotechnology, explained in Arabic.">
+  <meta property="og:image" content="assets/img/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home">
+
+<main id="main">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero-fade" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <div>
+        <span class="eyebrow light">AI Bel Araby · Science learning platform</span>
+        <h1>
+          <span class="line">When AI</span>
+          <span class="line"><span class="accent">Meets</span></span>
+          <span class="line">Biotechnology</span>
+        </h1>
+        <p class="hero-sub">Rigorous, hands-on courses on how AI is reshaping genomics, protein science, drug discovery and the lab — free for every learner.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" id="heroStart" href="courses.html">Start the first course <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15m0 0l-6-6m6 6l-6 6"/></svg></a>
+          <a class="btn btn-ghost-light btn-lg" href="courses.html">Browse courses</a>
+        </div>
+        <div class="hero-meta" id="heroMeta"></div>
+      </div>
+      <aside class="hero-card reveal d2" id="heroCard" aria-label="Featured course"></aside>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+
+  <!-- ============ STATS ============ -->
+  <section class="section-tight">
+    <div class="wrap">
+      <div class="stats reveal" id="stats"></div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED COURSE ============ -->
+  <section class="section" style="padding-top:20px" id="featured">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">Now open · Course 01</span>
+          <h2>Our flagship course is live.</h2>
+        </div>
+        <p>Ten modules that take you from machine-learning foundations to protein design, drug discovery and AI agents in the lab.</p>
+      </div>
+      <div id="featuredCourse" class="reveal d1"></div>
+    </div>
+  </section>
+
+  <!-- ============ FOCUS AREAS ============ -->
+  <section class="section section-dark" id="tracks">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow light">Focus areas</span>
+          <h2>Where artificial intelligence is changing the life sciences.</h2>
+        </div>
+        <p>Every course on the platform is built around these frontiers — explained from first principles, then applied to real data.</p>
+      </div>
+      <div class="tracks" id="trackGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="section" id="how">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">How it works</span>
+          <h2>Learn at your pace. Build with your hands.</h2>
+        </div>
+        <p>No sign-up wall, no fees. Open a lecture and start — your progress is saved automatically on your device.</p>
+      </div>
+      <div class="steps">
+        <article class="step reveal">
+          <div class="s-ico" data-icon="play"></div>
+          <h3>Watch the lectures</h3>
+          <p>High-quality recorded lectures, explained in Arabic with the English terms you will meet in papers.</p>
+        </article>
+        <article class="step reveal d1">
+          <div class="s-ico" data-icon="download"></div>
+          <h3>Download the material</h3>
+          <p>Slides, papers, datasets and notebooks for every lecture — yours to keep.</p>
+        </article>
+        <article class="step reveal d2">
+          <div class="s-ico" data-icon="lab"></div>
+          <h3>Do the labs</h3>
+          <p>Guided hands-on labs in Google Colab. Real biological data, right in your browser.</p>
+        </article>
+        <article class="step reveal d3">
+          <div class="s-ico" data-icon="target"></div>
+          <h3>Track your progress</h3>
+          <p>Mark lectures complete, keep personal notes and pick up exactly where you left off.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MISSION ============ -->
+  <section class="section section-paper2">
+    <div class="wrap mission">
+      <div class="reveal">
+        <span class="eyebrow">Why AI Bel Araby</span>
+        <p class="mission-quote" style="margin-top:18px">The most important science of our time should not be locked behind a <em>language</em> or a <em>price tag</em>.</p>
+        <div class="pillars">
+          <div class="pillar"><span data-icon="globe"></span><div><b>Arabic first</b><span>Deep explanations in Arabic, with scientific English preserved.</span></div></div>
+          <div class="pillar"><span data-icon="flask"></span><div><b>Science, not hype</b><span>Models are taught with the biology that makes them meaningful.</span></div></div>
+          <div class="pillar"><span data-icon="spark"></span><div><b>Free, always</b><span>Every lecture and every file, open to everyone.</span></div></div>
+        </div>
+      </div>
+      <p class="mission-ar reveal d1">Our goal is simple: every Arab student and researcher should be able to understand and use AI in the life sciences — from genome analysis and protein design to drug discovery — with accurate, rigorous explanations, in their own language, at no cost.</p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">FAQ</span>
+          <h2>Questions, answered.</h2>
+        </div>
+      </div>
+      <div class="faq reveal">
+        <details><summary>Is everything on the platform free? <span data-icon="plus"></span></summary><div class="ans">Yes. All lectures, slides, datasets and notebooks are free to watch and download. No subscription, no hidden fees.</div></details>
+        <details><summary>Do I need to create an account? <span data-icon="plus"></span></summary><div class="ans">No. Just open a course and start. Your progress and personal notes are saved automatically in your browser on this device.</div></details>
+        <details><summary>What background do I need? <span data-icon="plus"></span></summary><div class="ans">Each course lists its prerequisites. For AI Meets Biotech Advanced you need basic molecular biology and introductory Python — and Module 0 helps you catch up on the Python part.</div></details>
+        <details><summary>Do I need a powerful computer for the labs? <span data-icon="plus"></span></summary><div class="ans">No. Labs run in Google Colab, which gives you free cloud computing in your browser.</div></details>
+        <details><summary>What language are the lectures in? <span data-icon="plus"></span></summary><div class="ans">Lectures are explained in Arabic. Scientific and technical terms stay in English so you can read research papers with confidence.</div></details>
+        <details><summary>How do I hear about new lectures and courses? <span data-icon="plus"></span></summary><div class="ans">New lectures appear in the course curriculum as soon as they are released. Follow our social channels (linked at the bottom of the page) for announcements.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <div>
+          <h2>Ready when you are.</h2>
+          <p>Open the first lecture of AI Meets Biotech Advanced — it takes one click.</p>
+        </div>
+        <a class="btn btn-dark btn-lg" id="ctaStart" href="courses.html">Start learning free <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15m0 0l-6-6m6 6l-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/courses.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/helix.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
