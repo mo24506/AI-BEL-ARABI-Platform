@@ -79,11 +79,11 @@
   const allLessons = (c) => {
     const out = [];
     (c.modules || []).forEach((m, mi) =>
-      (m.lessons || []).forEach((l, li) => out.push(Object.assign({}, l, { _m: m, _mi: mi, _li: li })))
+      (m.lessons || []).forEach((l, li) => out.push(Object.assign({}, l, { _m: m, _mi: mi, _li: li, _gi: out.length })))
     );
     return out;
   };
-  const isPublished = (l) => !!(l.video && String(l.video).trim()) || (l.materials || []).length > 0 || !!(l.notes && l.notes.trim());
+  const isPublished = (l) => !!(l.video && String(l.video).trim());
   const parseDur = (d) => {
     // accepts "1:05:30", "45:10", "45 min", "1h 20m"
     if (!d) return 0;
@@ -108,9 +108,11 @@
     const ls = allLessons(c);
     const secs = ls.reduce((a, l) => a + parseDur(l.duration), 0);
     const mats = ls.reduce((a, l) => a + (l.materials || []).length, 0);
+    const kit = ls.reduce((a, l) => a + (l.toolkit || []).length, 0);
     return {
       modules: (c.modules || []).length,
       lessons: ls.length,
+      aiTools: kit,
       labs: ls.filter((l) => l.type === "lab").length,
       published: ls.filter(isPublished).length,
       materials: mats,
@@ -184,7 +186,10 @@
   }
   const MAT_ICON = { pdf: "file", slides: "slides", notebook: "code", code: "code", dataset: "data", data: "data", zip: "zip", link: "link", doc: "file", video: "play" };
   const matIcon = (t) => MAT_ICON[(t || "").toLowerCase()] || "file";
-  const TYPE_LABEL = { video: "Lecture", lab: "Hands-on lab", reading: "Reading", quiz: "Quiz" };
+  const TYPE_LABEL = { video: "Recorded session", lab: "Hands-on lab", reading: "Reading", quiz: "Quiz" };
+  const pad2 = (n) => String(n).padStart(2, "0");
+  const sessionTools = (c) => Array.from(new Set(allLessons(c).flatMap((l) => l.tools || [])));
+  const phoneHref = (p) => "tel:" + String(p || "").replace(/[^0-9+]/g, "");
   const typeIcon = (t) => ({ video: "play", lab: "lab", reading: "reading", quiz: "target" }[t] || "play");
 
   /* ---------- page chrome ---------- */
@@ -262,7 +267,9 @@
         </div>
         <div>
           <h4>Contact</h4>
-          ${SITE.contactEmail ? `<a href="mailto:${esc(SITE.contactEmail)}">${esc(SITE.contactEmail)}</a>` : `<span class="muted-light">Follow us for new lectures</span>`}
+          ${SITE.contactPhone ? `<a href="${phoneHref(SITE.contactPhone)}">For more details: ${esc(SITE.contactPhone)}</a>` : ""}
+          ${SITE.contactEmail ? `<a href="mailto:${esc(SITE.contactEmail)}">${esc(SITE.contactEmail)}</a>` : ""}
+          ${!SITE.contactPhone && !SITE.contactEmail ? `<span class="muted-light">Follow us for new sessions</span>` : ""}
         </div>
       </div>
       <div class="wrap footer-bottom">
@@ -292,5 +299,5 @@
     t._h = setTimeout(() => t.classList.remove("show"), 2200);
   }
 
-  window.AIB = { SITE, COURSES, $, $$, esc, qs, icon, getCourse, allLessons, isPublished, courseStats, parseDur, fmtHours, progress, store, parseVideo, materialLink, matIcon, TYPE_LABEL, typeIcon, header, footer, reveal, toast };
+  window.AIB = { pad2, sessionTools, phoneHref, SITE, COURSES, $, $$, esc, qs, icon, getCourse, allLessons, isPublished, courseStats, parseDur, fmtHours, progress, store, parseVideo, materialLink, matIcon, TYPE_LABEL, typeIcon, header, footer, reveal, toast };
 })();

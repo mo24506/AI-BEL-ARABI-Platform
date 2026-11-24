@@ -11,8 +11,8 @@ This is your course platform. The whole site is static files (HTML, CSS and JS),
 | `index.html` | Home page |
 | `courses.html` | Course catalog with search and filters |
 | `course.html?id=…` | Course page: curriculum, materials, instructors, FAQ |
-| `learn.html?c=…&l=…` | Lecture player: video, materials, personal notes, progress tracking |
-| `studio.html` | **Control panel**: add courses, lectures and links without code |
+| `learn.html?c=…&l=…` | Session player: video, materials, personal notes, progress tracking |
+| `studio.html` | **Control panel**: add courses, sessions and links without code |
 | `assets/js/courses.js` | **Content file**. This is the only file that changes when you add content |
 | `assets/css/style.css` | Colors and design (the brand red `#BF182A` is at the top) |
 | `assets/img/` | Logo and icons |
@@ -45,7 +45,7 @@ This is your course platform. The whole site is static files (HTML, CSS and JS),
 
 ---
 
-## 4) Upload lectures (large videos), free and with no limit
+## 4) Upload sessions (large videos), free and with no limit
 
 **Best option: YouTube, set to Unlisted**
 - There is no limit on the number of videos or total storage. Each single video can be up to **256 GB or 12 hours**.
@@ -66,11 +66,11 @@ Google Drive works too for smaller files (15 GB free). The site automatically tu
 
 ---
 
-## 6) Add a new lecture (no code)
+## 6) Add a new session (no code)
 
 1. Open `https://your-domain/studio.html`
-2. Open the lecture and paste the video link. A **YOUTUBE** badge appears if the link is valid. Click **Preview** to check it.
-3. Add materials and notes, or add a new module, lecture or course.
+2. Open the session and paste the video link. A **YOUTUBE** badge appears if the link is valid. Click **Preview** to check it.
+3. Add materials and notes, or add a new module, session or course.
 4. Click **Download courses.js**.
 5. In GitHub, open the `assets/js` folder, click **Add file → Upload files**, upload the new `courses.js` (it replaces the old one) and commit.
 6. The live site updates in about a minute.

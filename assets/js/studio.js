@@ -35,6 +35,8 @@
     let v = el.type === "checkbox" ? el.checked : el.value;
     if (el.dataset.kind === "lines") v = v.split("\n").map((s) => s.trim()).filter(Boolean);
     if (el.dataset.kind === "csv") v = v.split(",").map((s) => s.trim()).filter(Boolean);
+    if (el.dataset.kind === "toolkit") v = v.split("\n").map((s) => s.split("|").map((x) => x.trim())).filter((p) => p[0]).map((p) => ({ name: p[0], access: (p[1] || "open").toLowerCase(), desc: p.slice(2).join(" | ") }));
+    if (el.dataset.kind === "pairs") v = v.split("\n").map((s) => s.split("|").map((x) => x.trim())).filter((p) => p[0]).map((p) => ({ value: p[0], label: p.slice(1).join(" | ") }));
     if (el.dataset.kind === "faq") v = v.split("\n").map((s) => s.split("|")).filter((p) => p[0] && p[0].trim()).map((p) => ({ q: p[0].trim(), a: (p.slice(1).join("|") || "").trim() }));
     setPath(el.dataset.b, v);
     if (el.dataset.live === "lesson") liveLesson(el);
@@ -55,11 +57,13 @@
     let val = v == null ? "" : v;
     if (kind === "lines") val = (v || []).join("\n");
     if (kind === "csv") val = (v || []).join(", ");
+    if (kind === "toolkit") val = (v || []).map((t) => [t.name, t.access, t.desc].join(" | ")).join("\n");
+    if (kind === "pairs") val = (v || []).map((t) => t.value + " | " + t.label).join("\n");
     if (kind === "faq") val = (v || []).map((f) => f.q + " | " + f.a).join("\n");
     const attrs = `data-b="${path}" ${kind ? `data-kind="${kind}"` : ""} ${opts.live ? `data-live="${opts.live}"` : ""} ${opts.ph ? `placeholder="${esc(opts.ph)}"` : ""} ${opts.dir ? `dir="${opts.dir}"` : ""}`;
     let input;
     if (opts.select) input = `<select ${attrs}>${opts.select.map((o) => `<option value="${o[0]}" ${String(val) === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select>`;
-    else if (opts.area || kind === "lines" || kind === "faq") input = `<textarea ${attrs} rows="${opts.rows || 4}">${esc(val)}</textarea>`;
+    else if (opts.area || kind === "lines" || kind === "faq" || kind === "toolkit" || kind === "pairs") input = `<textarea ${attrs} rows="${opts.rows || 4}">${esc(val)}</textarea>`;
     else input = `<input ${attrs} value="${esc(val)}">`;
     return `<label class="f ${opts.full ? "full" : ""}">${label}${opts.help ? ` <span class="h">${opts.help}</span>` : ""}${input}</label>`;
   };
@@ -90,20 +94,28 @@
           <button class="ib" data-act="lup" data-m="${mi}" data-l="${li}" title="Move up">${icon("up")}</button>
           <button class="ib" data-act="ldown" data-m="${mi}" data-l="${li}" title="Move down">${icon("down")}</button>
         </span>
-        <span class="lt">${esc(l.title || "Untitled lecture")}</span>
+        <span class="lt">${esc(l.title || "Untitled session")}</span>
         <span class="vb">${videoBadge(l.video)}</span>
-        <button class="ib del" data-act="ldel" data-m="${mi}" data-l="${li}" title="Delete lecture">${icon("trash")}</button>
+        <button class="ib del" data-act="ldel" data-m="${mi}" data-l="${li}" title="Delete session">${icon("trash")}</button>
       </summary>
       <div class="les-b">
         <div class="fg">
-          ${fld("Lecture title", base + ".title", { live: "lesson", full: true })}
-          ${fld("Type", base + ".type", { select: [["video", "Lecture (video)"], ["lab", "Hands-on lab"], ["reading", "Reading"], ["quiz", "Quiz"]] })}
+          ${fld("Session title", base + ".title", { live: "lesson", full: true })}
+          ${fld("Type", base + ".type", { select: [["video", "Recorded session"], ["lab", "Hands-on lab"], ["reading", "Reading"], ["quiz", "Quiz"]] })}
           ${fld("Duration", base + ".duration", { ph: "e.g. 45:30 or 1:12:00", help: "optional" })}
         </div>
         <label class="f">Video link <span class="h">YouTube (unlisted), Google Drive, Vimeo, archive.org or a direct .mp4</span>
           <div class="vid-line"><input data-b="${base}.video" data-live="lesson" value="${esc(l.video || "")}" placeholder="https://youtu.be/…"><button class="btn btn-dark btn-sm" data-act="preview" data-m="${mi}" data-l="${li}">${icon("eye")} Preview</button></div>
         </label>
-        ${fld("Lecture notes", base + ".notes", { area: true, rows: 4, help: "shown under the video — plain text or simple HTML", ph: "Summary, key points, links to papers…" })}
+        ${fld("What you will learn", base + ".learn", { kind: "lines", rows: 4, help: "one per line" })}
+        <div class="fg">
+          ${fld("Live demo", base + ".demo", { area: true, rows: 2 })}
+          ${fld("Key takeaway", base + ".takeaway", { area: true, rows: 2 })}
+          ${fld("Tools you will use", base + ".tools", { kind: "csv", help: "comma separated" })}
+          ${fld("Topic chips", base + ".areas", { kind: "csv", help: "optional, comma separated" })}
+        </div>
+        ${fld("AI toolkit", base + ".toolkit", { kind: "toolkit", rows: 4, help: "optional, one per line:  Name | open / free / commercial | description" })}
+        ${fld("Extra notes", base + ".notes", { area: true, rows: 3, help: "optional, plain text or simple HTML", ph: "Links to papers, reminders…" })}
         <div>
           <div class="f" style="margin-bottom:8px">Materials <span class="h" style="font-weight:400;color:var(--muted)">slides, PDFs, datasets, notebooks — paste the share link</span></div>
           ${mats.map((m, k) => `<div class="mat-row">
@@ -129,12 +141,11 @@
     ed.innerHTML = `
       <section class="card" id="s-info">
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap">
-          <div><h2>${esc(c.title || "Untitled course")}</h2><p class="hint">${st.modules} modules · ${st.lessons} lectures · ${st.published} with content · link: <code class="k">course.html?id=${esc(c.id)}</code></p></div>
+          <div><h2>${esc(c.title || "Untitled course")}</h2><p class="hint">${st.modules} modules · ${st.lessons} sessions · ${st.published} with content · link: <code class="k">course.html?id=${esc(c.id)}</code></p></div>
           <div style="display:flex;gap:8px"><a class="btn btn-ghost btn-sm" href="course.html?id=${encodeURIComponent(c.id)}" target="_blank">${icon("eye")} View</a><button class="btn btn-ghost btn-sm" data-act="cdel">${icon("trash")} Delete course</button></div>
         </div>
         <div class="fg">
           ${fld("Course title", b + ".title", { live: "course" })}
-          ${fld("Arabic title", b + ".titleAr", { dir: "rtl" })}
           ${fld("Subtitle (one line)", b + ".subtitle", { full: true })}
           ${fld("Level", b + ".level", { ph: "Beginner / Intermediate / Advanced" })}
           ${fld("Language", b + ".language")}
@@ -145,7 +156,9 @@
           ${fld("What you'll learn", b + ".outcomes", { kind: "lines", full: true, help: "one per line" })}
           ${fld("Who it's for", b + ".audience", { kind: "lines", help: "one per line" })}
           ${fld("Prerequisites", b + ".prerequisites", { kind: "lines", help: "one per line" })}
-          ${fld("Tools", b + ".tools", { kind: "csv", full: true, help: "comma separated" })}
+          ${fld("Course tools", b + ".tools", { kind: "csv", full: true, help: "optional; leave empty to list every tool used in the sessions" })}
+          ${fld("Badges", b + ".badges", { kind: "lines", help: "one per line" })}
+          ${fld("Highlight numbers", b + ".highlights", { kind: "pairs", help: "one per line:  12 | Recorded sessions" })}
           ${fld("Course FAQ", b + ".faq", { kind: "faq", full: true, rows: 4, help: "one per line:  Question | Answer" })}
           <label class="f full" style="display:flex;align-items:center;gap:10px;font-weight:500"><input type="checkbox" data-b="${b}.featured" ${c.featured ? "checked" : ""} style="width:auto"> Feature this course on the home page</label>
         </div>
@@ -162,7 +175,7 @@
 
       <section class="card" id="s-cur">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-          <div><h2>Curriculum & lectures</h2><p class="hint" style="margin:0">Open a lecture to paste its video link and attach materials.</p></div>
+          <div><h2>Curriculum & sessions</h2><p class="hint" style="margin:0">Open a session to paste its video link and attach materials.</p></div>
           <button class="btn btn-ghost btn-sm" data-act="openall">Expand / collapse all</button>
         </div>
         <div style="margin-top:20px">
@@ -179,7 +192,7 @@
           <div class="mod-b">
             <input class="in" data-b="${b}.modules.${mi}.summary" value="${esc(m.summary || "")}" placeholder="Short module summary" style="margin-bottom:12px;background:#fff">
             ${(m.lessons || []).map((_, li) => lessonHTML(mi, li)).join("")}
-            <button class="addbtn" data-act="ladd" data-m="${mi}">${icon("plus")} Add lecture</button>
+            <button class="addbtn" data-act="ladd" data-m="${mi}">${icon("plus")} Add session</button>
           </div>
         </div>`).join("")}
         <button class="btn btn-dark" data-act="modadd">${icon("plus")} Add module</button>
@@ -192,7 +205,7 @@
     const d = el.closest(".les"); if (!d) return;
     const path = el.dataset.b.split(".").slice(0, 6).join(".");
     const l = getPath(path);
-    $(".lt", d).textContent = l.title || "Untitled lecture";
+    $(".lt", d).textContent = l.title || "Untitled session";
     $(".vb", d).innerHTML = videoBadge(l.video);
   }
 
@@ -202,8 +215,8 @@
     $("#siteForm").innerHTML = [
       fld("Platform name", "site.name"),
       fld("Slogan", "site.slogan"),
-      fld("Arabic slogan", "site.sloganAr", { dir: "rtl", full: true }),
-      fld("Contact email", "site.contactEmail", { ph: "hello@yourdomain.com", full: true })
+      fld("Contact phone", "site.contactPhone", { ph: "0101 3949 760" }),
+      fld("Contact email", "site.contactEmail", { ph: "hello@yourdomain.com" })
     ].concat(["facebook", "instagram", "linkedin", "youtube", "tiktok", "telegram", "whatsapp"].map((k) => fld(k[0].toUpperCase() + k.slice(1), "site.social." + k, { ph: "https://…" }))).join("");
   }
 
@@ -217,11 +230,11 @@
     const mods = c && c.modules;
     switch (btn.dataset.act) {
       case "modadd": mods.push({ id: uid("m"), title: "New module", summary: "", lessons: [] }); break;
-      case "moddel": if (!confirm(`Delete module “${mods[mi].title}” and all its lectures?`)) return; mods.splice(mi, 1); break;
+      case "moddel": if (!confirm(`Delete module “${mods[mi].title}” and all its sessions?`)) return; mods.splice(mi, 1); break;
       case "mup": move(mods, mi, -1); break;
       case "mdown": move(mods, mi, 1); break;
-      case "ladd": { const l = { id: uid(mods[mi].id || "l"), title: "New lecture", type: "video", duration: "", video: "", notes: "", materials: [] }; mods[mi].lessons.push(l); openLessons.add(l.id); break; }
-      case "ldel": if (!confirm(`Delete lecture “${mods[mi].lessons[li].title}”?`)) return; mods[mi].lessons.splice(li, 1); break;
+      case "ladd": { const l = { id: uid(mods[mi].id || "l"), title: "New session", type: "video", duration: "", video: "", learn: [], demo: "", tools: [], takeaway: "", notes: "", materials: [] }; mods[mi].lessons.push(l); openLessons.add(l.id); break; }
+      case "ldel": if (!confirm(`Delete session “${mods[mi].lessons[li].title}”?`)) return; mods[mi].lessons.splice(li, 1); break;
       case "lup": move(mods[mi].lessons, li, -1); break;
       case "ldown": move(mods[mi].lessons, li, 1); break;
       case "madd": (mods[mi].lessons[li].materials = mods[mi].lessons[li].materials || []).push({ label: "", url: "", type: "pdf", size: "" }); break;
@@ -257,7 +270,7 @@
    AI Bel Araby — CONTENT FILE  (generated by Studio ${new Date().toISOString().slice(0, 10)})
    ---------------------------------------------------------------------
    Replace assets/js/courses.js in your repository with this file.
-   Edit visually at /studio.html — or by hand: each lecture has
+   Edit visually at /studio.html — or by hand: each session has
    title, type, duration, video (link), notes and materials.
    ===================================================================== */\n\n`;
     return headerNote + "window.SITE = " + JSON.stringify(state.site, null, 2) + ";\n\nwindow.COURSES = " + JSON.stringify(state.courses, null, 2) + ";\n";

@@ -8,6 +8,20 @@
   const courseUrl = (c) => `course.html?id=${encodeURIComponent(c.id)}`;
   const lessonUrl = (c, l) => `learn.html?c=${encodeURIComponent(c.id)}&l=${encodeURIComponent(l.id)}`;
   const pad = (n) => String(n).padStart(2, "0");
+  const ACC = { open: "Open", free: "Free", commercial: "Commercial" };
+  const toolkitGrid = (kit) => `<div class="kit">${kit.map((t, i) => `<div class="kit-item"><span class="kit-n">${pad(i + 1)}</span><div><div class="kit-top"><b>${esc(t.name)}</b><span class="acc ${esc(t.access)}">${ACC[t.access] || esc(t.access)}</span></div><p>${esc(t.desc)}</p></div></div>`).join("")}</div>`;
+  function sessionOverview(l) {
+    let h = "";
+    if ((l.learn || []).length) h += `<h3 class="ov-h">What you will learn</h3><ul class="clean ov-list">${l.learn.map((x) => `<li>${icon("check")}<span>${esc(x)}</span></li>`).join("")}</ul>`;
+    if ((l.areas || []).length) h += `<div class="tools" style="margin:18px 0 4px">${l.areas.map((x) => `<span class="chip chip-dark">${esc(x)}</span>`).join("")}</div>`;
+    if (l.demo) h += `<div class="demo">${icon("play")}<div><span class="eyebrow light">Live demo</span><p>${esc(l.demo)}</p></div></div>`;
+    if ((l.tools || []).length) h += `<h3 class="ov-h">Tools you will use</h3><div class="tools">${l.tools.map((t) => `<span class="chip chip-dark">${icon("code")} ${esc(t)}</span>`).join("")}</div>`;
+    if ((l.toolkit || []).length) h += `<h3 class="ov-h">The ${l.toolkit.length} tools</h3><div class="legend dark"><span class="acc open">Open-source / open data</span><span class="acc free">Free to use online</span><span class="acc commercial">Commercial</span></div>${toolkitGrid(l.toolkit)}`;
+    if (l.takeaway) h += `<blockquote class="takeaway"><span class="eyebrow light">Key takeaway</span><p>${esc(l.takeaway)}</p></blockquote>`;
+    const notes = (l.notes || "").trim();
+    if (notes) h += `<h3 class="ov-h">Notes</h3><div class="rich">${/<[a-z][\s\S]*>/i.test(notes) ? notes : notes.split(/\n{2,}/).map((pp) => `<p>${esc(pp).replace(/\n/g, "<br>")}</p>`).join("")}</div>`;
+    return h;
+  }
 
   function fillIcons(root) { $$("[data-icon]", root).forEach((el) => { el.innerHTML = icon(el.dataset.icon); }); }
 
@@ -36,8 +50,8 @@
 
     $("#heroMeta").innerHTML = [
       ["spark", "100% free"],
-      ["globe", "Explained in Arabic"],
-      ["lab", "Hands-on Colab labs"],
+      ["clock", "Learn at your own pace"],
+      ["lab", "Hands-on demo every session"],
       ["target", "Progress tracking"]
     ].map(([i, t]) => `<span>${icon(i)}${t}</span>`).join("");
 
@@ -50,25 +64,25 @@
       <h3>${esc(featured.title)}</h3>
       <p>${esc(featured.subtitle || "")}</p>
       <div class="hc-modules">
-        ${mods.slice(0, 5).map((m, i) => `<div><span class="n">${pad(i)}</span>${esc(m.title)}</div>`).join("")}
+        ${mods.slice(0, 5).map((m, i) => `<div><span class="n">M${i + 1}</span>${esc(m.title)}<span style="margin-left:auto;color:rgba(255,255,255,.4);font-size:.8rem">${(m.lessons || []).length} sessions</span></div>`).join("")}
         ${mods.length > 5 ? `<div><span class="n">+${mods.length - 5}</span><span style="color:rgba(255,255,255,.5)">more modules</span></div>` : ""}
       </div>
       <div class="hc-stats">
+        <div><b>${st.lessons}</b><span>Sessions</span></div>
+        <div><b>${st.aiTools}</b><span>AI tools</span></div>
         <div><b>${st.modules}</b><span>Modules</span></div>
-        <div><b>${st.lessons}</b><span>Lectures</span></div>
-        <div><b>${st.labs}</b><span>Labs</span></div>
       </div>
       <a class="btn btn-primary" style="width:100%" href="${courseUrl(featured)}">View course ${icon("arrow")}</a>`;
 
-    const words = ["Machine Learning", "Genomics", "Protein Design", "Drug Discovery", "Single-Cell", "Bioimaging", "Deep Learning", "LLMs for Science", "Biotechnology"];
+    const words = ["Python", "Machine Learning", "Deep Learning", "Genomics", "AlphaFold", "Protein Design", "Drug Discovery", "Medical Imaging", "LLMs for Science"];
     $("#ticker").innerHTML = words.concat(words).map((w) => `<span>${w}</span>`).join("");
 
     const all = COURSES.map(A.courseStats);
     const sum = (k) => all.reduce((a, s) => a + s[k], 0);
     $("#stats").innerHTML = `
-      <div class="stat"><b>${sum("modules")}</b><span>In-depth modules</span></div>
-      <div class="stat"><b>${sum("lessons")}</b><span>Lectures & labs</span></div>
-      <div class="stat"><b>${sum("labs")}</b><span>Hands-on labs</span></div>
+      <div class="stat"><b>${sum("lessons")}</b><span>Recorded sessions</span></div>
+      <div class="stat"><b>${sum("aiTools")}</b><span>Real AI tools</span></div>
+      <div class="stat"><b>${pad(sum("modules"))}</b><span>Learning modules</span></div>
       <div class="stat"><b><em>Free</em></b><span>For every learner, always</span></div>`;
 
     const p = progress.percent(featured);
@@ -88,8 +102,8 @@
           <p>${esc(featured.subtitle || "")}</p>
           <div class="meta-row">
             <span class="chip">${icon("layers")} ${st.modules} modules</span>
-            <span class="chip">${icon("play")} ${st.lessons} lectures</span>
-            <span class="chip">${icon("lab")} ${st.labs} labs</span>
+            <span class="chip">${icon("play")} ${st.lessons} sessions</span>
+            <span class="chip">${icon("chip")} ${st.aiTools} AI tools</span>
             ${st.hours ? `<span class="chip">${icon("clock")} ${st.hours}</span>` : ""}
           </div>
           ${p > 0 ? `<div style="margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:6px"><span>Your progress</span><span>${p}%</span></div><div class="bar"><i style="width:${p}%"></i></div></div>` : ""}
@@ -101,21 +115,22 @@
       </article>`;
 
     const tracks = [
-      ["dna", "Genomics & sequences", "Read DNA and RNA like a language — variant effects, regulatory code and genomic foundation models.", "m3"],
-      ["protein", "Protein structure & design", "How AI predicts structure, what protein language models learn, and designing proteins from scratch.", "m4"],
-      ["pill", "AI-driven drug discovery", "Molecular representations, property prediction, virtual screening and generative chemistry.", "m5"],
-      ["cell", "Single-cell & multi-omics", "From count matrices to cell types, states and integrated views of biology.", "m6"],
-      ["microscope", "Bioimaging & pathology", "Computer vision for microscopy and histopathology, from segmentation to whole slides.", "m7"],
-      ["chat", "LLMs & AI agents in science", "Language models and agents as research tools — and how to use them responsibly.", "m8"]
+      ["dna", "Genomics", "Deep-learning variant calling, expression signatures, single-cell data and DNA language models.", "s05"],
+      ["protein", "Protein structure", "How AlphaFold solved protein folding, and how to judge a predicted structure with pLDDT and PAE.", "s06"],
+      ["spark", "Protein design", "Generative AI that designs proteins nature never made: ESM, RFdiffusion and ProteinMPNN.", "s07"],
+      ["pill", "Drug discovery", "From target to clinic: molecules as data, virtual screening, ADMET prediction and generative chemistry.", "s08"],
+      ["microscope", "Microscopy & medical imaging", "AI that sees: cell counting, digital pathology and X-ray, CT and MRI.", "s09"],
+      ["chat", "LLMs for scientists", "Using AI assistants for papers, protocols and code, and catching their confident mistakes.", "s10"]
     ];
-    $("#trackGrid").innerHTML = tracks.map(([ic, t, d, mid], i) => {
-      const mi = mods.findIndex((m) => m.id === mid);
-      const href = mi > -1 ? `${courseUrl(featured)}#${mid}` : courseUrl(featured);
+    const lsF = A.allLessons(featured);
+    $("#trackGrid").innerHTML = tracks.map(([ic, t, d, lid], i) => {
+      const l = lsF.find((x) => x.id === lid);
+      const href = l ? lessonUrl(featured, l) : courseUrl(featured);
       return `<a class="track reveal ${i % 3 === 1 ? "d1" : i % 3 === 2 ? "d2" : ""}" href="${href}">
         <span class="t-num">${pad(i + 1)}</span>
         <span class="t-ico">${icon(ic)}</span>
         <h3>${t}</h3><p>${d}</p>
-        ${mi > -1 ? `<span class="t-mod">MODULE ${pad(mi)} · ${esc(featured.title).toUpperCase()}</span>` : ""}
+        ${l ? `<span class="t-mod">SESSION ${pad(l._gi + 1)} · MODULE ${l._mi + 1} · ${esc(l._m.title).toUpperCase()}</span>` : ""}
       </a>`;
     }).join("");
 
@@ -155,7 +170,8 @@
           <p>${esc(c.subtitle || "")}</p>
           <div class="ccard-meta">
             <span>${icon("layers")}${st.modules} modules</span>
-            <span>${icon("play")}${st.lessons} lectures</span>
+            <span>${icon("play")}${st.lessons} sessions</span>
+            ${st.aiTools ? `<span>${icon("chip")}${st.aiTools} AI tools</span>` : ""}
             ${st.hours ? `<span>${icon("clock")}${st.hours}</span>` : ""}
           </div>
           ${p > 0 ? `<div class="bar" title="${p}% complete"><i style="width:${p}%"></i></div>` : ""}
@@ -197,6 +213,8 @@
     const p = progress.get(c.id);
     const pct = progress.percent(c);
     const ls = A.allLessons(c);
+    const tools = (c.tools || []).length ? c.tools : A.sessionTools(c);
+    const kits = ls.filter((l) => (l.toolkit || []).length);
     const mats = ls.flatMap((l) => (l.materials || []).map((m) => Object.assign({ lesson: l }, m)));
 
     const lessonRow = (l, idx) => {
@@ -204,9 +222,10 @@
       const pub = A.isPublished(l);
       return `<a class="lesson-row ${done ? "done" : ""}" href="${lessonUrl(c, l)}">
         <span class="l-ico">${icon(done ? "check" : A.typeIcon(l.type))}</span>
-        <span>${esc(l.title)}</span>
+        <span><span class="l-num">${pad(l._gi + 1)}</span>${esc(l.title)}</span>
         <span class="l-meta">
           ${l.type === "lab" ? `<span class="lab">Lab</span>` : ""}
+          ${(l.toolkit || []).length ? `<span class="lab">${l.toolkit.length} tools</span>` : ""}
           ${!pub ? `<span class="soon">Soon</span>` : ""}
           ${l.duration ? `<span>${esc(l.duration)}</span>` : ""}
           ${(l.materials || []).length ? `<span title="Materials">${icon("file")}${l.materials.length}</span>` : ""}
@@ -224,12 +243,13 @@
           <div class="facts">
             <span>${icon("target")}${esc(c.level || "")}</span>
             <span>${icon("layers")}${st.modules} modules</span>
-            <span>${icon("play")}${st.lessons} lectures</span>
-            <span>${icon("lab")}${st.labs} hands-on labs</span>
+            <span>${icon("play")}${st.lessons} recorded sessions</span>
+            ${st.aiTools ? `<span>${icon("chip")}${st.aiTools} real AI tools</span>` : ""}
             ${st.hours ? `<span>${icon("clock")}${st.hours} of video</span>` : ""}
             <span>${icon("globe")}${esc(c.language || "")}</span>
           </div>
           <div class="tags">${(c.tags || []).map((t) => `<span class="chip chip-dark">${esc(t)}</span>`).join("")}</div>
+          ${(c.badges || []).length ? `<div class="badges">${c.badges.map((b) => `<span>${icon("check")}${esc(b)}</span>`).join("")}</div>` : ""}
         </div>
       </section>
 
@@ -238,6 +258,7 @@
           <nav class="tabs" aria-label="Course sections">
             <a href="#overview" class="is-on">Overview</a>
             <a href="#curriculum">Curriculum</a>
+            ${kits.length ? `<a href="#toolkits">AI tools</a>` : ""}
             <a href="#materials">Materials</a>
             <a href="#instructors">Instructors</a>
             ${(c.faq || []).length ? `<a href="#course-faq">FAQ</a>` : ""}
@@ -258,24 +279,30 @@
             <div><h3>Before you start</h3><ul class="clean plain">${(c.prerequisites || []).map((o) => `<li>${icon("chevron")}<span>${esc(o)}</span></li>`).join("")}</ul></div>
           </section>
 
-          ${(c.tools || []).length ? `<section class="panel"><h2 style="font-size:1.3rem">Tools you'll use</h2><div class="tools">${c.tools.map((t) => `<span class="chip">${icon("code")} ${esc(t)}</span>`).join("")}</div></section>` : ""}
+          ${tools.length ? `<section class="panel"><h2 style="font-size:1.3rem">Tools you'll use in the demos</h2><div class="tools">${tools.map((t) => `<span class="chip">${icon("code")} ${esc(t)}</span>`).join("")}</div></section>` : ""}
 
           <section class="panel" id="curriculum">
             <div class="cur-head">
-              <div><h2>Curriculum</h2><p class="muted" style="font-size:.92rem;margin-top:4px">${st.modules} modules · ${st.lessons} lectures${st.published < st.lessons ? ` · ${st.published} released so far` : ""}</p></div>
+              <div><h2>Curriculum</h2><p class="muted" style="font-size:.92rem;margin-top:4px">${st.modules} modules · ${st.lessons} sessions${st.published && st.published < st.lessons ? ` · ${st.published} released so far` : ""}</p></div>
               <button class="linkbtn" id="toggleAll">Expand all</button>
             </div>
             ${(c.modules || []).map((m, i) => `
               <details class="module" id="${esc(m.id)}" ${i === 0 ? "open" : ""}>
                 <summary>
-                  <span class="m-num">${pad(i)}</span>
+                  <span class="m-num">M${i + 1}</span>
                   <span><div class="m-title">${esc(m.title)}</div>${m.summary ? `<div class="m-sub">${esc(m.summary)}</div>` : ""}</span>
-                  <span class="m-right"><span class="count">${(m.lessons || []).length} lectures</span>${icon("chevronDown", "chev")}</span>
+                  <span class="m-right"><span class="count">${(m.lessons || []).length} sessions</span>${icon("chevronDown", "chev")}</span>
                 </summary>
-                ${(m.lessons || []).map(lessonRow).join("")}
+                ${ls.filter((x) => x._mi === i).map(lessonRow).join("")}
               </details>`).join("")}
           </section>
 
+          ${kits.length ? `<section class="panel" id="toolkits">
+            <h2>${st.aiTools} real AI tools you'll meet</h2>
+            <p style="margin-bottom:22px">The final module tours the AI tools used today in labs, hospitals and drug pipelines.</p>
+            <div class="legend"><span class="acc open">Open-source / open data</span><span class="acc free">Free to use online</span><span class="acc commercial">Commercial</span></div>
+            ${kits.map((l) => `<h3 class="kit-h">Session ${pad(l._gi + 1)} · ${esc(l.title)}</h3>${toolkitGrid(l.toolkit)}`).join("")}
+          </section>` : ""}
           <section class="panel" id="materials">
             <h2>Course materials</h2>
             ${mats.length ? `<div class="mats">${mats.map((m) => `
@@ -284,7 +311,7 @@
                 <span><b>${esc(m.label || "Material")}</b><small>${esc(m.lesson.title)}${m.size ? " · " + esc(m.size) : ""}</small></span>
                 <span class="dl">${icon("download")}</span>
               </a>`).join("")}</div>`
-              : `<p>Slides, papers, datasets and notebooks will appear here as each lecture is released.</p>`}
+              : `<p>Slides, papers, datasets and notebooks will appear here as each session is released.</p>`}
           </section>
 
           <section class="panel" id="instructors">
@@ -310,18 +337,21 @@
             <div class="side-body">
               <div class="price-big">${esc(c.price || "Free")}<small>full access</small></div>
               <a class="btn btn-primary btn-lg" href="${go.href}">${go.label} ${icon("arrow")}</a>
-              ${go.started ? `<p class="muted" style="font-size:.85rem;margin-top:10px">Up next: ${esc(go.lesson ? go.lesson.title : "")}</p>` : ""}
+              ${go.started ? `<p class="muted" style="font-size:.85rem;margin-top:10px">Up next: Session ${go.lesson ? pad(go.lesson._gi + 1) + " · " + esc(go.lesson.title) : ""}</p>` : ""}
               <div class="side-prog">
                 <div class="row"><span>Your progress</span><span>${pct}% · ${p.done.length}/${st.lessons}</span></div>
                 <div class="bar"><i style="width:${pct}%"></i></div>
               </div>
               <div class="includes">
-                <div>${icon("play")}${st.lessons} lectures & labs</div>
+                <div>${icon("play")}${st.lessons} recorded sessions</div>
+                ${st.aiTools ? `<div>${icon("chip")}${st.aiTools} real AI tools</div>` : ""}
+                <div>${icon("lab")}Hands-on demo every session</div>
                 <div>${icon("download")}Downloadable slides & datasets</div>
-                <div>${icon("notes")}Personal notes for every lecture</div>
+                <div>${icon("notes")}Personal notes for every session</div>
                 <div>${icon("globe")}Watch on any device</div>
                 <div>${icon("spark")}Free, no account needed</div>
               </div>
+              ${SITE.contactPhone ? `<a class="contact-line" href="${A.phoneHref(SITE.contactPhone)}">${icon("chat")}<span>For more details<b>${esc(SITE.contactPhone)}</b></span></a>` : ""}
               <div class="share-row">
                 <button class="btn btn-ghost btn-sm" id="copyLink">${icon("link")} Copy link</button>
                 ${navigator.share ? `<button class="btn btn-ghost btn-sm" id="shareBtn">${icon("arrow")} Share</button>` : ""}
@@ -406,7 +436,7 @@
             <section class="p-panel" data-panel="ov" id="pOverview"></section>
             <section class="p-panel" data-panel="mat" id="pMaterials" hidden></section>
             <section class="p-panel" data-panel="notes" hidden>
-              <textarea id="myNotes" placeholder="Write your notes for this lecture… they are saved automatically on this device."></textarea>
+              <textarea id="myNotes" placeholder="Write your notes for this session… they are saved automatically on this device."></textarea>
               <div class="notes-bar"><span class="muted-light" id="noteState">Saved locally</span><button class="btn btn-ghost-light btn-sm" id="exportNotes">${icon("download")} Export all my notes</button></div>
             </section>
             <p class="kbd-hint">${icon("keyboard")} Shortcuts: <kbd>N</kbd> next · <kbd>P</kbd> previous · <kbd>M</kbd> mark complete</p>
@@ -415,7 +445,7 @@
         <aside class="p-side" id="pSide">
           <div class="p-side-head">
             <b>Course content</b>
-            <div class="p-search">${icon("search")}<input id="lessonFilter" placeholder="Search lectures" aria-label="Search lectures"></div>
+            <div class="p-search">${icon("search")}<input id="lessonFilter" placeholder="Search sessions" aria-label="Search sessions"></div>
           </div>
           <div class="p-list" id="pList"></div>
         </aside>
@@ -476,15 +506,15 @@
       const v = A.parseVideo(l.video);
       if (!v) {
         stage.innerHTML = `<div class="stage-empty"><canvas id="stageCanvas" aria-hidden="true"></canvas>
-          <div class="se-inner"><span class="eyebrow light">${l.type === "lab" ? "Hands-on lab" : "Lecture"}</span>
-          <h2>${A.isPublished(l) ? "Read the notes & materials below" : "This lecture is coming soon"}</h2>
+          <div class="se-inner"><span class="eyebrow light">Session ${pad(idx + 1)}</span>
+          <h2>${A.isPublished(l) ? "Read the notes & materials below" : "This session is coming soon"}</h2>
           <p>${A.isPublished(l) ? "This lesson has no video — open the materials tab." : "It will appear right here as soon as it's released."}</p></div></div>`;
         window.AIBHelix($("#stageCanvas"), { cx: 0.5, cy: 0.5, angle: -0.3, amp: 0.12, turns: 3, pairs: 40, particles: 30, seed: idx + 4 });
         return;
       }
       if (v.provider === "file") {
         stage.innerHTML = `<video controls playsinline preload="metadata" src="${esc(v.src)}"></video>`;
-        $("video", stage).addEventListener("ended", () => { if (!progress.isDone(c.id, l.id)) { progress.toggle(c.id, l.id, true); A.toast("Lecture complete ✓"); update(); } });
+        $("video", stage).addEventListener("ended", () => { if (!progress.isDone(c.id, l.id)) { progress.toggle(c.id, l.id, true); A.toast("Session complete ✓"); update(); } });
       } else {
         stage.innerHTML = `<iframe src="${esc(v.embed)}" title="${esc(l.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" loading="lazy"></iframe>`;
       }
@@ -500,15 +530,15 @@
           const done = p.done.indexOf(l.id) > -1;
           return `<a class="p-item ${gi === idx ? "is-cur" : ""} ${done ? "done" : ""}" href="${lessonUrl(c, l)}" data-i="${gi}">
             <span class="p-check">${icon(done ? "check" : A.typeIcon(l.type))}</span>
-            <span class="p-it">${esc(l.title)}${!A.isPublished(l) ? ` <em>soon</em>` : ""}</span>
+            <span class="p-it"><b class="p-n">${pad(gi + 1)}</b> ${esc(l.title)}${!A.isPublished(l) ? ` <em>soon</em>` : ""}</span>
             ${l.duration ? `<span class="p-dur">${esc(l.duration)}</span>` : ""}
           </a>`;
         }).join("");
         if (!rows) return;
         const doneCount = (m.lessons || []).filter((l) => p.done.indexOf(l.id) > -1).length;
-        html += `<div class="p-mod"><div class="p-mod-h"><span class="mono">${pad(mi)}</span><span>${esc(m.title)}</span><small>${doneCount}/${(m.lessons || []).length}</small></div>${rows}</div>`;
+        html += `<div class="p-mod"><div class="p-mod-h"><span class="mono">M${mi + 1}</span><span>${esc(m.title)}</span><small>${doneCount}/${(m.lessons || []).length}</small></div>${rows}</div>`;
       });
-      $("#pList").innerHTML = html || `<p class="muted-light" style="padding:20px">No lectures match.</p>`;
+      $("#pList").innerHTML = html || `<p class="muted-light" style="padding:20px">No sessions match.</p>`;
       $$(".p-item", side).forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); go(+a.dataset.i); }));
       const cur = $(".p-item.is-cur", side);
       if (cur && !filter) cur.scrollIntoView({ block: "nearest" });
@@ -531,25 +561,23 @@
       progress.setLast(c.id, l.id);
       document.title = `${l.title} — ${c.title}`;
       renderStage(l);
-      $("#lEyebrow").textContent = `Module ${pad(l._mi)} · ${l._m.title}`;
+      $("#lEyebrow").textContent = `Module ${l._mi + 1} · ${l._m.title}`;
       $("#lTitle").textContent = l.title;
       $("#lMeta").innerHTML = [
-        `<span>${icon(A.typeIcon(l.type))}${A.TYPE_LABEL[l.type] || "Lecture"}</span>`,
+        `<span>${icon(A.typeIcon(l.type))}${A.TYPE_LABEL[l.type] || "Session"}</span>`,
         l.duration ? `<span>${icon("clock")}${esc(l.duration)}</span>` : "",
-        `<span>${icon("list")}Lesson ${idx + 1} of ${ls.length}</span>`
+        `<span>${icon("list")}Session ${pad(idx + 1)} of ${pad(ls.length)}</span>`
       ].join("");
       $("#prevBtn").disabled = idx === 0;
       $("#nextBtn").disabled = idx === ls.length - 1;
 
-      const notes = (l.notes || "").trim();
-      $("#pOverview").innerHTML = notes
-        ? `<div class="rich">${/<[a-z][\s\S]*>/i.test(notes) ? notes : notes.split(/\n{2,}/).map((pp) => `<p>${esc(pp).replace(/\n/g, "<br>")}</p>`).join("")}</div>`
-        : `<p class="muted-light">${esc(l._m.summary || "Lecture notes will be added here.")}</p>`;
+      const ov = sessionOverview(l);
+      $("#pOverview").innerHTML = ov || `<p class="muted-light">${esc(l._m.summary || "Session notes will be added here.")}</p>`;
       const mats = l.materials || [];
       $("#matTab").textContent = `Materials${mats.length ? ` (${mats.length})` : ""}`;
       $("#pMaterials").innerHTML = mats.length
         ? `<div class="mats dark">${mats.map((m) => `<a class="mat" href="${esc(A.materialLink(m.url))}" target="_blank" rel="noopener"><span class="m-ic">${icon(A.matIcon(m.type))}</span><span><b>${esc(m.label || "Material")}</b><small>${esc((m.type || "file").toUpperCase())}${m.size ? " · " + esc(m.size) : ""}</small></span><span class="dl">${icon("download")}</span></a>`).join("")}</div>`
-        : `<p class="muted-light">No downloadable materials for this lecture yet.</p>`;
+        : `<p class="muted-light">No downloadable materials for this session yet.</p>`;
       ta.value = A.store.get(notesKey(l.id), "");
       update();
     }

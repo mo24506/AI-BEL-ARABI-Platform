@@ -2,20 +2,21 @@
    AI Bel Araby — CONTENT FILE
    ---------------------------------------------------------------------
    This is the ONLY file you need to change to add courses, modules,
-   lectures and materials. You can edit it by hand, or use the visual
-   editor at /studio.html and download a fresh copy of this file.
+   sessions and materials. Edit it by hand, or use the visual editor
+   at /studio.html and download a fresh copy of this file.
+
+   Each session can have:
+     title, duration, video, learn (list), demo, tools (list),
+     takeaway, toolkit (list of tools with access + description),
+     notes and materials.
 
    VIDEO LINKS ("video") — paste any of these, the site detects them:
      • YouTube (recommended, unlimited & free; upload as "Unlisted")
-         https://www.youtube.com/watch?v=XXXXXXXXXXX
-         https://youtu.be/XXXXXXXXXXX
      • Google Drive (share: "Anyone with the link")
-         https://drive.google.com/file/d/FILE_ID/view
-     • Vimeo, Internet Archive (archive.org/details/...),
-       or a direct .mp4 / .webm link (e.g. a GitHub Release asset)
-     Leave it "" and the lecture shows as "Coming soon".
+     • Vimeo, Internet Archive, or a direct .mp4 / .webm link
+     Leave it "" and the session shows as "Coming soon".
 
-   MATERIAL LINKS ("materials") — PDFs, slides, datasets, notebooks:
+   MATERIAL LINKS ("materials"):
      { label: "Slides (PDF)", url: "https://...", type: "pdf", size: "12 MB" }
      type can be: pdf, slides, notebook, dataset, code, zip, link, doc
    ===================================================================== */
@@ -26,8 +27,8 @@ window.SITE = {
   slogan: "When AI Meets Biotechnology",
   sloganAr: "",
   description:
-    "A free learning platform for AI in science and biotechnology — rigorous, hands-on courses explained in Arabic.",
-  // Fill these in and they appear automatically in the footer & contact areas.
+    "A free learning platform for AI in science and biotechnology: hands-on courses for life-science students.",
+  contactPhone: "0101 3949 760",
   contactEmail: "",
   social: {
     facebook: "",
@@ -46,34 +47,39 @@ window.COURSES = [
     title: "AI Meets Biotech Advanced",
     titleAr: "",
     subtitle:
-      "From sequences to structures to drugs: build, evaluate and apply modern AI models to real biological data.",
-    status: "open", // "open" or "soon"
+      "A hands-on course for life-science students: from your first line of Python to leveraging AI as a biotechnologist and scientist.",
+    status: "open",
     featured: true,
-    level: "Advanced",
+    level: "No coding experience needed",
     language: "Arabic, with English scientific terms",
     price: "Free",
-    tags: ["Genomics", "Proteins", "Drug Discovery", "Single-cell", "Bioimaging", "LLMs"],
+    highlights: [
+      { value: "12", label: "Recorded sessions" },
+      { value: "24", label: "Real AI tools" },
+      { value: "04", label: "Learning modules" }
+    ],
+    badges: ["No coding experience needed", "Learn at your own pace", "Hands-on demo every session"],
+    tags: ["Python", "Machine Learning", "Genomics", "Proteins", "Drug Discovery", "Imaging", "LLMs"],
     description:
-      "AI Meets Biotech Advanced is our flagship course for students and researchers who want to move beyond buzzwords and actually use AI in the life sciences. Each module pairs the core idea behind a family of models with a hands-on lab on real biological data, so you finish able to read the literature critically, choose the right model for a biological question, and build a working pipeline yourself.",
+      "AI Meets Biotech Advanced is a 12-session practical course that takes life-science students from their first line of Python to using AI the way working biotechnologists and scientists do. Across four modules you move from the foundations of machine learning and deep learning, through AI for genomes and proteins, to drug discovery, medical imaging and AI research assistants, and finish with 24 real AI tools used in labs, hospitals and drug pipelines today. Every session includes a hands-on demo on real biological data or a real tool.",
     outcomes: [
-      "Translate a biological question into a well-posed machine-learning problem",
-      "Train and honestly evaluate models on omics, sequence and imaging data",
-      "Understand how protein structure prediction and protein language models work",
-      "Build a molecular property model for early-stage drug discovery",
-      "Analyze single-cell RNA-seq data from raw counts to annotated clusters",
-      "Use LLMs and AI tools in research responsibly and reproducibly"
+      "Explain the difference between AI, machine learning and deep learning, and where each is used in biotech",
+      "Write Python in Google Colab to work with DNA sequences, FASTA files and expression tables",
+      "Train and evaluate a machine-learning model on real biological data",
+      "Predict and judge protein structures with AlphaFold, ColabFold and ESMFold",
+      "Apply AI to genomics, protein design, drug discovery and microscopy images",
+      "Use LLMs as a research assistant and verify everything they produce"
     ],
     audience: [
-      "Biotechnology, pharmacy, medicine and life-science students",
-      "Researchers who want to add AI to their wet-lab or clinical work",
-      "Programmers and data scientists moving into bio"
+      "Life-science students: biotechnology, pharmacy, medicine, biology and related fields",
+      "Anyone who wants to leverage AI as a biotechnologist or scientist"
     ],
     prerequisites: [
-      "Basic molecular biology (DNA, RNA, proteins)",
-      "Introductory Python — or complete Module 0 first",
-      "A Google account for free Colab notebooks (no powerful laptop needed)"
+      "No coding experience needed",
+      "A laptop and a Google account for free Google Colab",
+      "Curiosity about biology and AI"
     ],
-    tools: ["Python", "Google Colab", "PyTorch", "scikit-learn", "Biopython", "RDKit", "Scanpy"],
+    tools: [],
     instructors: [
       {
         name: "AI Bel Araby Team",
@@ -84,117 +90,247 @@ window.COURSES = [
     ],
     modules: [
       {
-        id: "m0",
-        title: "Orientation & Toolkit",
-        summary: "How the course works and getting your free coding environment ready.",
-        lessons: [
-          { id: "m0-l1", title: "Welcome: why AI is changing biotechnology", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m0-l2", title: "Your toolkit: Python, Google Colab and GitHub", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m0-l3", title: "Python crash course for life scientists", type: "lab", duration: "", video: "", notes: "", materials: [] }
-        ]
-      },
-      {
         id: "m1",
-        title: "Machine Learning Foundations for Life Scientists",
-        summary: "The core ideas every later module builds on — and the mistakes that ruin biological ML.",
+        title: "Foundations",
+        summary: "What AI really is, your first Python code, and how machine learning and deep learning learn from biological data.",
         lessons: [
-          { id: "m1-l1", title: "From a biological question to an ML problem", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m1-l2", title: "Supervised vs. unsupervised learning on biological data", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m1-l3", title: "Evaluation done right: splits, metrics and data leakage", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m1-l4", title: "Lab: classifying tumor subtypes from gene expression", type: "lab", duration: "", video: "", notes: "", materials: [] }
+          {
+            id: "s01",
+            title: "Introduction to AI in Biotech",
+            type: "video", duration: "", video: "",
+            learn: [
+              "AI vs machine learning vs deep learning: the “Russian dolls” analogy",
+              "Why biology is perfect for AI: genomes, proteins and images at huge scale",
+              "The map: genomics, proteins, drugs, imaging and lab automation",
+              "Myth vs fact: scientists who use AI will replace those who don’t"
+            ],
+            demo: "Explore human insulin in the AlphaFold Protein Structure Database and read its pLDDT confidence colours.",
+            tools: ["AlphaFold DB", "Google Colab"],
+            takeaway: "AI finds patterns at a scale no human can reach. Biology gives it the data, you give it the questions.",
+            notes: "", materials: []
+          },
+          {
+            id: "s02",
+            title: "Python for Biologists: Your First Lines of Code",
+            type: "video", duration: "", video: "",
+            learn: [
+              "Google Colab: write and run Python with nothing to install",
+              "Python through biology: DNA as a string, GC content, reverse complement",
+              "Biopython: FASTA files, transcription and translation",
+              "pandas for expression tables; data from NCBI, UniProt, PDB and GEO"
+            ],
+            demo: "Pull the human insulin (INS) sequence from NCBI, compute its GC content and translate it into protein.",
+            tools: ["Google Colab", "Python", "Biopython", "pandas", "NCBI"],
+            takeaway: "You don’t need to be a programmer. You need your biology and a few lines of Python.",
+            notes: "", materials: []
+          },
+          {
+            id: "s03",
+            title: "Machine Learning 101: Teaching Computers with Biological Data",
+            type: "video", duration: "", video: "",
+            learn: [
+              "Supervised vs unsupervised learning: training set = practice, test set = final exam",
+              "Key algorithms: decision trees, random forests, k-NN, logistic regression",
+              "Evaluation: accuracy, precision, recall and the confusion matrix",
+              "Overfitting: memorising answers vs truly learning"
+            ],
+            demo: "Train a random forest on the Breast Cancer Wisconsin dataset (scikit-learn) and plot feature importance.",
+            tools: ["scikit-learn", "Random forest", "Google Colab"],
+            takeaway: "Machine learning finds patterns in examples, and good data beats fancy algorithms.",
+            notes: "", materials: []
+          },
+          {
+            id: "s04",
+            title: "Deep Learning: Neural Networks Inspired by Biology",
+            type: "video", duration: "", video: "",
+            learn: [
+              "The artificial neuron (inputs, weights, activation) vs dendrites and synapses",
+              "How networks learn: loss, gradient descent and backpropagation",
+              "CNNs for images; Transformers and attention behind ChatGPT and AlphaFold",
+              "What deep learning needs: lots of data, GPUs and careful validation"
+            ],
+            demo: "Watch a network learn live in TensorFlow Playground, then train a small Keras model in Colab.",
+            tools: ["TensorFlow Playground", "Keras"],
+            takeaway: "Deep learning finds features by itself, which is why it shines on raw sequences and images.",
+            notes: "", materials: []
+          }
         ]
       },
       {
         id: "m2",
-        title: "Deep Learning Essentials",
-        summary: "Neural networks, convolutions and transformers — explained with biology in mind.",
+        title: "Genomes & Proteins",
+        summary: "Reading genomes with AI, predicting protein structures with AlphaFold, and designing proteins nature never made.",
         lessons: [
-          { id: "m2-l1", title: "Neural networks from first principles", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m2-l2", title: "Convolutional networks for sequences and images", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m2-l3", title: "Attention and transformers", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m2-l4", title: "Lab: your first PyTorch model", type: "lab", duration: "", video: "", notes: "", materials: [] }
+          {
+            id: "s05",
+            title: "AI for Genomics: Reading the Book of Life",
+            type: "video", duration: "", video: "",
+            learn: [
+              "Deep-learning variant calling (DeepVariant) and variant-effect prediction (AlphaMissense)",
+              "Gene-expression signatures: clustering patients and subtyping cancer",
+              "Single-cell RNA-seq: PCA and UMAP to discover cell types",
+              "DNA language models and personalised medicine"
+            ],
+            demo: "Load a small expression dataset from GEO in Colab, run PCA and cluster the samples by tumour type.",
+            tools: ["DeepVariant", "AlphaMissense", "GEO", "ClinVar", "UMAP"],
+            takeaway: "Genomes are very long texts; AI is the reader that spots the typos that cause disease.",
+            notes: "", materials: []
+          },
+          {
+            id: "s06",
+            title: "AlphaFold: How AI Solved the Protein Folding Problem",
+            type: "video", duration: "", video: "",
+            learn: [
+              "Why structure decides function, and why folding stayed unsolved for 50 years",
+              "How AlphaFold works in simple terms: alignments, evolution, attention, 3D refinement",
+              "Reading confidence: pLDDT (per residue) and PAE (relative position)",
+              "Faster options (ESMFold, ColabFold) and limits: disorder, dynamics, lab validation"
+            ],
+            demo: "Paste a sequence into ColabFold or ESMFold, open it in Mol*, and compare with the experimental PDB entry.",
+            tools: ["AlphaFold", "ColabFold", "ESMFold", "Mol*"],
+            takeaway: "AlphaFold turned years into minutes. Your job is knowing when to trust it.",
+            notes: "", materials: []
+          },
+          {
+            id: "s07",
+            title: "Generative AI: Designing Proteins Nature Never Made",
+            type: "video", duration: "", video: "",
+            learn: [
+              "Prediction vs design: inverse folding starts from a shape and finds the sequence",
+              "Protein language models (ESM) and diffusion models (RFdiffusion)",
+              "ProteinMPNN: choosing amino acids that fold into the designed shape",
+              "The design-build-test loop and real uses: binders, enzymes, vaccines"
+            ],
+            demo: "Score single mutations of a protein with an ESM notebook and read the mutation-effect heatmap.",
+            tools: ["ESM", "RFdiffusion", "ProteinMPNN"],
+            takeaway: "Biology is becoming an engineering discipline: AI is the design software, the lab is the factory.",
+            notes: "", materials: []
+          }
         ]
       },
       {
         id: "m3",
-        title: "AI for Genomics & Sequence Analysis",
-        summary: "Reading DNA like a language: encodings, variant effects and genomic foundation models.",
+        title: "AI in Practice",
+        summary: "AI in drug discovery, AI that sees cells and scans, and using LLMs as a research assistant.",
         lessons: [
-          { id: "m3-l1", title: "Encoding DNA and RNA for machine learning", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m3-l2", title: "Predicting regulatory activity and variant effects", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m3-l3", title: "Genomic language models", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m3-l4", title: "Lab: predicting transcription-factor binding from sequence", type: "lab", duration: "", video: "", notes: "", materials: [] }
+          {
+            id: "s08",
+            title: "AI in Drug Discovery: From Years to Months",
+            type: "video", duration: "", video: "",
+            learn: [
+              "The pipeline: target → hit → lead → preclinical → clinical, and where AI fits",
+              "Representing molecules: SMILES, fingerprints, graph neural networks",
+              "Virtual screening, docking and ADMET prediction with ML",
+              "Generative chemistry, repurposing and cases (halicin, Insilico)"
+            ],
+            demo: "Use RDKit in Colab to draw drugs, compute MW and LogP, and check Lipinski’s Rule of Five.",
+            tools: ["RDKit", "PubChem"],
+            takeaway: "AI doesn’t replace the lab. It decides which experiments are worth doing.",
+            notes: "", materials: []
+          },
+          {
+            id: "s09",
+            title: "AI That Sees: Microscopy, Pathology and Medical Imaging",
+            type: "video", duration: "", video: "",
+            learn: [
+              "How a computer sees: images as numbers, filters and CNNs",
+              "Classification, detection and segmentation: three different jobs",
+              "Uses: cell counting, digital pathology, X-ray/CT/MRI, bacterial colonies",
+              "Pitfalls: biased training data, scanner and stain variation, expert labels"
+            ],
+            demo: "Run Cellpose on a fluorescent nuclei image and compare its count with a manual count.",
+            tools: ["Cellpose", "Google Colab"],
+            takeaway: "In imaging, AI is the tireless assistant: fast and consistent, but it still needs expert eyes.",
+            notes: "", materials: []
+          },
+          {
+            id: "s10",
+            title: "Your AI Research Assistant: LLMs for Biotech Students",
+            type: "video", duration: "", video: "",
+            learn: [
+              "How LLMs work: predicting text, not looking up facts",
+              "Prompting with role, context, task and format, using biotech examples",
+              "Uses: paper summaries, protocol drafts, calculations, Python help, writing",
+              "The danger zone: fake references and confident mistakes, so always verify"
+            ],
+            demo: "Summarise a real abstract with an AI assistant, then check every reference it gives on PubMed.",
+            tools: ["AI assistants", "PubMed"],
+            takeaway: "AI assistants are brilliant interns, not professors. Go faster, but never stop thinking.",
+            notes: "", materials: []
+          }
         ]
       },
       {
         id: "m4",
-        title: "Protein Structure, Function & Design",
-        summary: "How structure prediction works, what protein language models learn, and designing new proteins.",
+        title: "Real-World AI Toolkits",
+        summary: "24 AI tools used today in medical biotechnology and across the drug design and development pipeline.",
         lessons: [
-          { id: "m4-l1", title: "The protein folding problem and how AI cracked it", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m4-l2", title: "Protein language models and embeddings", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m4-l3", title: "Generative protein design", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m4-l4", title: "Lab: predict, visualize and interpret a protein structure", type: "lab", duration: "", video: "", notes: "", materials: [] }
-        ]
-      },
-      {
-        id: "m5",
-        title: "AI-Driven Drug Discovery",
-        summary: "Molecules as data: representations, property prediction, virtual screening and generative chemistry.",
-        lessons: [
-          { id: "m5-l1", title: "Representing molecules: SMILES, fingerprints and graphs", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m5-l2", title: "Graph neural networks for molecular properties", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m5-l3", title: "Virtual screening, docking and ML scoring", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m5-l4", title: "Generative models for new molecules", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m5-l5", title: "Lab: building a QSAR model with RDKit", type: "lab", duration: "", video: "", notes: "", materials: [] }
-        ]
-      },
-      {
-        id: "m6",
-        title: "Single-Cell & Multi-Omics",
-        summary: "From count matrices to cell types, trajectories and integrated multi-omics views.",
-        lessons: [
-          { id: "m6-l1", title: "The single-cell RNA-seq workflow", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m6-l2", title: "Dimensionality reduction and clustering", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m6-l3", title: "Integrating batches and omics layers", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m6-l4", title: "Lab: annotating cell types with Scanpy", type: "lab", duration: "", video: "", notes: "", materials: [] }
-        ]
-      },
-      {
-        id: "m7",
-        title: "Bioimaging & Digital Pathology",
-        summary: "Computer vision for microscopy and histopathology slides.",
-        lessons: [
-          { id: "m7-l1", title: "Image analysis fundamentals for biologists", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m7-l2", title: "Cell and tissue segmentation with U-Net", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m7-l3", title: "Whole-slide images and computational pathology", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m7-l4", title: "Lab: segmenting nuclei in microscopy images", type: "lab", duration: "", video: "", notes: "", materials: [] }
-        ]
-      },
-      {
-        id: "m8",
-        title: "LLMs, AI Agents & Responsible Science",
-        summary: "Using large language models in research — and the ethics, biosafety and reproducibility that come with it.",
-        lessons: [
-          { id: "m8-l1", title: "LLMs for literature review and bioinformatics", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m8-l2", title: "AI agents in the lab: promise and limits", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m8-l3", title: "Bias, biosafety, privacy and reproducibility", type: "video", duration: "", video: "", notes: "", materials: [] }
-        ]
-      },
-      {
-        id: "m9",
-        title: "Capstone Project",
-        summary: "Bring it together: an end-to-end AI project on a biological dataset of your choice.",
-        lessons: [
-          { id: "m9-l1", title: "Choosing a question and a dataset", type: "video", duration: "", video: "", notes: "", materials: [] },
-          { id: "m9-l2", title: "Building, evaluating and presenting your project", type: "video", duration: "", video: "", notes: "", materials: [] }
+          {
+            id: "s11",
+            title: "12 AI Tools in Medical Biotechnology",
+            type: "video", duration: "", video: "",
+            learn: [
+              "12 AI tools used in labs and hospitals",
+              "Which exact problem each tool solves",
+              "How to try the free tools yourself"
+            ],
+            areas: ["Genomics", "Single-cell", "Microscopy", "Pathology", "Radiology", "Research"],
+            demo: "Run Cellpose on a microscopy image, then fold a protein on AlphaFold Server: two tools, two results, ten minutes.",
+            tools: ["Cellpose", "AlphaFold Server"],
+            takeaway: "",
+            toolkit: [
+              { name: "AlphaFold 3", access: "free", desc: "Predicts structures of proteins, DNA, RNA and ligand complexes (free web server)" },
+              { name: "AlphaMissense", access: "open", desc: "Scores how likely each missense variant is to cause disease" },
+              { name: "DeepVariant", access: "open", desc: "Calls genetic variants from sequencing reads using a CNN" },
+              { name: "scGPT", access: "open", desc: "Foundation model for single-cell data and cell-type annotation" },
+              { name: "Cellpose", access: "open", desc: "Segments cells and nuclei in microscopy images" },
+              { name: "QuPath", access: "open", desc: "Analyses whole-slide pathology images with ML classifiers" },
+              { name: "Paige Prostate", access: "commercial", desc: "AI-assisted prostate cancer detection on pathology slides (FDA-authorized)" },
+              { name: "LumineticsCore", access: "commercial", desc: "Autonomous diabetic retinopathy screening, formerly IDx-DR (FDA-authorized)" },
+              { name: "Aidoc", access: "commercial", desc: "Flags urgent findings on CT and X-ray for radiologists" },
+              { name: "MONAI", access: "open", desc: "PyTorch framework for building medical imaging AI" },
+              { name: "TotalSegmentator", access: "open", desc: "Automatically segments organs and structures in CT and MRI" },
+              { name: "Elicit", access: "free", desc: "AI research assistant that finds papers and extracts their data" }
+            ],
+            notes: "", materials: []
+          },
+          {
+            id: "s12",
+            title: "12 AI Tools in Drug Design and Development",
+            type: "video", duration: "", video: "",
+            learn: [
+              "12 AI tools for drug discovery, design and development",
+              "Where each tool sits in the drug pipeline",
+              "Hands-on with ADMET-AI to evaluate molecules yourself"
+            ],
+            areas: ["Target discovery", "Molecule design", "Docking & screening", "ADMET", "Clinical trials"],
+            demo: "Paste three SMILES into the ADMET-AI web server, read the predicted properties and rank the molecules.",
+            tools: ["ADMET-AI"],
+            takeaway: "",
+            toolkit: [
+              { name: "Boltz-2", access: "open", desc: "Predicts biomolecular complexes and ligand binding affinity" },
+              { name: "RFdiffusion", access: "open", desc: "Generates new protein backbones and binders" },
+              { name: "ProteinMPNN", access: "open", desc: "Designs sequences that fold into a chosen structure" },
+              { name: "DiffDock", access: "open", desc: "Diffusion-based docking of small molecules to proteins" },
+              { name: "DeepChem", access: "open", desc: "Deep-learning toolkit for molecular property prediction" },
+              { name: "Chemprop", access: "open", desc: "Graph neural networks that predict molecular properties" },
+              { name: "REINVENT 4", access: "open", desc: "Generative design of new drug-like molecules (AstraZeneca)" },
+              { name: "ADMET-AI", access: "free", desc: "Web server predicting absorption, toxicity and other ADMET properties" },
+              { name: "PandaOmics", access: "commercial", desc: "Ranks disease targets from omics and literature data (Insilico Medicine)" },
+              { name: "Chemistry42", access: "commercial", desc: "Generative chemistry platform (Insilico Medicine)" },
+              { name: "AtomNet", access: "commercial", desc: "Structure-based virtual screening of huge compound libraries (Atomwise)" },
+              { name: "Unlearn", access: "commercial", desc: "AI digital twins for designing smaller, faster clinical trials" }
+            ],
+            notes: "", materials: []
+          }
         ]
       }
     ],
     faq: [
-      { q: "Is the course really free?", a: "Yes. Every lecture and every material is free to watch and download." },
-      { q: "Do I need a powerful computer?", a: "No. All labs run in Google Colab in your browser, which is free." },
-      { q: "In which language is it taught?", a: "Lectures are explained in Arabic, while scientific and technical terms are kept in English so you can read papers comfortably." }
+      { q: "Do I need coding experience?", a: "No. Session 02 starts from your very first line of Python, and every demo runs in Google Colab in your browser." },
+      { q: "Are the sessions live or recorded?", a: "All 12 sessions are recorded, so you can learn at your own pace and rewatch any part." },
+      { q: "Is the course really free?", a: "Yes. Every session and every material is free to watch and download." },
+      { q: "How can I get more details?", a: "Call or message us on 0101 3949 760." }
     ]
   }
 ];
