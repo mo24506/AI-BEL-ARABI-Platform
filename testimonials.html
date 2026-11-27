@@ -19,34 +19,94 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body data-page="info" data-key="testimonials">
+<body data-page="testimonials" data-key="testimonials">
 <main id="main">
-  <section class="page-head">
-    <div class="wrap">
+  <section class="th">
+    <div class="th-bubbles" id="thBubbles" aria-hidden="true"></div>
+    <div class="wrap th-inner">
       <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Testimonials</span></div>
-      <h1>Testimonials</h1>
-      <p>What learners say about AI Bel Araby.</p>
+      <h1>Trusted by the students we teach.</h1>
+      <p>Real words from real learners. Every quote on this page links to the original message or public post.</p>
+      <div class="th-stats" id="thStats"></div>
     </div>
   </section>
-  <section class="section" style="padding-top:56px">
+
+  <section class="section tf-wrap">
     <div class="wrap">
-      <div class="soon-card reveal">
-        <div class="soon-ico" data-icon="chat"></div>
-        <div>
-          <span class="eyebrow">Coming soon</span>
-          <h2 style="margin-top:12px">Testimonials are coming soon</h2>
-          <p>Feedback from our learners will be shared here.</p>
-          <div class="actions">
-            <a class="btn btn-primary" href="courses.html">Explore online courses</a>
-            <a class="btn btn-ghost" data-phone href="#" hidden></a>
+      <div class="tf" id="tFeatured"></div>
+    </div>
+  </section>
+
+  <section class="section tl-wrap">
+    <div class="wrap">
+      <div class="section-head">
+        <div><span class="eyebrow">Shared publicly</span><h2>In their own words on LinkedIn.</h2></div>
+        <p>Students who chose to post about their experience and certificates.</p>
+      </div>
+      <div class="tl" id="tLinked"></div>
+    </div>
+  </section>
+
+  <section class="section tw-wrap">
+    <div class="wrap">
+      <div class="section-head">
+        <div><span class="eyebrow">Messages from students</span><h2>What they told us after the sessions.</h2></div>
+        <p>Sent to our team on WhatsApp. Arabic messages are shown in English; tap any card to see the original.</p>
+      </div>
+      <div class="evf tw-f" id="tFilters" role="tablist" aria-label="Filter testimonials"></div>
+      <div class="tw" id="tWall"></div>
+      <div class="tr" id="tReactions"></div>
+    </div>
+  </section>
+
+  <section class="section tp-wrap">
+    <div class="wrap">
+      <div class="section-head">
+        <div><span class="eyebrow light">Recognition</span><h2>Recognized by the community.</h2></div>
+      </div>
+      <div class="tp">
+        <button class="tp-award" data-open="award-nbn.jpg" data-cap="Certificate of appreciation from the Nano Bio Nexus Conference">
+          <img src="assets/img/testimonials/award-nbn.jpg" alt="Certificate of appreciation from the Nano Bio Nexus Conference" loading="lazy">
+        </button>
+        <div class="tp-side">
+          <div class="tp-card">
+            <span class="eyebrow light">Award</span>
+            <h3>Nano Bio Nexus Conference</h3>
+            <p>A certificate of appreciation to AI Bel Araby for its effective participation in the conference.</p>
           </div>
+          <div class="tp-card">
+            <span class="eyebrow light">Live online sessions</span>
+            <div class="tp-live">
+              <button data-open="live-1.jpg" data-cap="Digital Brainstorm: Machine Learning"><img src="assets/img/testimonials/live-1.jpg" alt="Digital Brainstorm: Machine Learning session slide" loading="lazy"></button>
+              <button data-open="live-2.jpg" data-cap="The Impact of Technology on Teaching and Learning"><img src="assets/img/testimonials/live-2.jpg" alt="The Impact of Technology on Teaching and Learning session slide" loading="lazy"></button>
+            </div>
+          </div>
+          <a class="tp-card tp-link" href="events.html"><span class="eyebrow light">On the ground</span><h3 id="tpEvents">Events</h3><p>See where we've taught and spoken across Egypt.</p><span class="tp-arrow" data-icon="arrow"></span></a>
         </div>
       </div>
-      <div class="soon-grid" aria-hidden="true"><div class="soon-ph">Content coming soon</div><div class="soon-ph">Content coming soon</div><div class="soon-ph">Content coming soon</div></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;margin-top:110px">
+    <div class="wrap">
+      <div class="cta-band">
+        <div><h2>Join them.</h2><p>Start the AI Meets Biotech course today.</p></div>
+        <a class="btn btn-dark btn-lg" id="tCta" href="courses.html">Start learning</a>
+      </div>
     </div>
   </section>
 </main>
+<div class="lb tlb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-top"><div><b id="lbTitle">Original message</b><span id="lbCount"></span></div><button class="lb-btn" id="lbClose" aria-label="Close"></button></div>
+  <div class="lb-stage">
+    <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous"></button>
+    <figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+    <button class="lb-btn lb-next" id="lbNext" aria-label="Next"></button>
+  </div>
+</div>
 <script src="assets/js/courses.js"></script>
+<script src="assets/js/testimonials.js"></script>
+<script src="assets/js/events.js"></script>
 <script src="assets/js/core.js"></script>
 <script src="assets/js/app.js"></script>
 </body>

@@ -684,6 +684,79 @@
     A.reveal();
     if (location.hash) { const t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(() => t.scrollIntoView(), 100); }
   }
+  function testimonials() {
+    A.header("testimonials");
+    A.footer();
+    fillIcons(document);
+    const T = window.TESTIMONIALS || [], K = window.T_KINDS || {}, R = window.T_REACTIONS || [], L = window.T_LINKEDIN || [];
+    const IMG = (f) => "assets/img/testimonials/" + f;
+    const total = T.length + R.length + L.length;
+    $("#thStats").innerHTML = [[total, "student testimonials"], [L.length, "public LinkedIn posts"], [(window.EVENTS || []).length, "events"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
+    $("#tpEvents").textContent = `${(window.EVENTS || []).length} events`;
+    const bubbleTexts = T.filter((t) => !t.featured).slice(0, 10).map((t) => t.quote.split(/[.!]/)[0]);
+    $("#thBubbles").innerHTML = bubbleTexts.map((q, i) => `<span class="b b${i % 5}">${esc(q)}.</span>`).join("");
+    const quoteIco = `<svg class="qmark" viewBox="0 0 48 36" aria-hidden="true"><path fill="currentColor" d="M0 36V22.5C0 9.6 6.2 2.1 18.5 0l2 4.6C13.4 6.5 9.8 10.7 9.6 17H19v19H0zm27 0V22.5C27 9.6 33.2 2.1 45.5 0l2 4.6C40.4 6.5 36.8 10.7 36.6 17H46v19H27z"/></svg>`;
+    const meta = (t) => `<div class="tcard-meta"><span class="tavatar">${icon("users")}</span><span><b>${esc(K[t.kind] ? K[t.kind] + " student" : "Student")}</b><small>${t.lang === "ar" ? "Translated from Arabic · " : ""}via WhatsApp</small></span></div>`;
+
+    // featured
+    const F = T.filter((t) => t.featured);
+    $("#tFeatured").innerHTML = F.map((t, i) => `<figure class="tf-card ${i === 0 ? "big" : ""}">
+      ${quoteIco}<blockquote>${esc(i === 0 ? t.quote : t.quote)}</blockquote>
+      <figcaption>${meta(t)}<button class="tview" data-id="${t.id}">${icon("eye")} View original</button></figcaption></figure>`).join("");
+
+    // linkedin
+    $("#tLinked").innerHTML = L.map((p, i) => `<article class="tl-card">
+      <div class="tl-top"><span class="tl-in" aria-hidden="true">in</span><div><b>${esc(p.name)}</b><small>${esc(p.role)}</small></div></div>
+      <p class="tl-prog">${esc(p.program)}</p>
+      <blockquote>${esc(p.quote)}</blockquote>
+      <button class="tview" data-li="${i}">${icon("eye")} View post</button></article>`).join("");
+
+    // wall
+    const rest = T.filter((t) => !t.featured);
+    const counts = {}; rest.forEach((t) => (counts[t.kind] = (counts[t.kind] || 0) + 1));
+    $("#tFilters").innerHTML = `<button class="evf-b is-on" data-f="all">All <i>${rest.length}</i></button>` + Object.keys(K).filter((k) => counts[k]).map((k) => `<button class="evf-b" data-f="${k}">${esc(K[k])} <i>${counts[k]}</i></button>`).join("");
+    const LONG = 230;
+    $("#tWall").innerHTML = rest.map((t) => {
+      const long = t.quote.length > LONG;
+      return `<figure class="tcard" data-kind="${t.kind}">
+        <span class="tkind">${esc(K[t.kind] || "")}</span>
+        <blockquote class="${long ? "clamp" : ""}">${esc(t.quote)}</blockquote>
+        ${long ? `<button class="tmore">Read more</button>` : ""}
+        <figcaption>${meta(t)}<button class="tview icon" data-id="${t.id}" aria-label="View original message">${icon("eye")}</button></figcaption></figure>`;
+    }).join("");
+    $("#tReactions").innerHTML = `<span class="tr-l">Quick reactions</span>` + R.map((r, i) => `<button class="tr-b" data-r="${i}">“${esc(r.text)}”</button>`).join("");
+
+    $("#tFilters").addEventListener("click", (e) => {
+      const b = e.target.closest(".evf-b"); if (!b) return;
+      $$("#tFilters .evf-b").forEach((x) => x.classList.toggle("is-on", x === b));
+      $$(".tcard").forEach((c) => (c.hidden = !(b.dataset.f === "all" || c.dataset.kind === b.dataset.f)));
+    });
+    $("#tWall").addEventListener("click", (e) => {
+      const m = e.target.closest(".tmore"); if (!m) return;
+      const q = m.previousElementSibling; const open = q.classList.toggle("clamp"); m.textContent = open ? "Read more" : "Show less";
+    });
+
+    // lightbox
+    const lb = $("#lb"), img = $("#lbImg");
+    $("#lbClose").innerHTML = icon("x"); $("#lbPrev").innerHTML = icon("left"); $("#lbNext").innerHTML = icon("chevron");
+    let set = [], cur = 0, last = null;
+    const show = (k) => { cur = (k + set.length) % set.length; img.classList.remove("ready"); img.onload = () => img.classList.add("ready"); img.src = IMG(set[cur].src); img.alt = set[cur].cap; $("#lbCap").textContent = set[cur].cap; $("#lbCount").textContent = set.length > 1 ? `${cur + 1} / ${set.length}` : ""; };
+    const open = (items, title) => { set = items; last = document.activeElement; $("#lbTitle").textContent = title; $("#lbPrev").hidden = $("#lbNext").hidden = items.length < 2; lb.hidden = false; document.body.style.overflow = "hidden"; show(0); $("#lbClose").focus(); };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ""; img.src = ""; if (last) last.focus(); };
+    document.addEventListener("click", (e) => {
+      const v = e.target.closest("[data-id],[data-li],[data-r],[data-open]"); if (!v || v.closest("#lb")) return;
+      if (v.dataset.id) { const t = T.find((x) => x.id === v.dataset.id); open(t.img.map((s) => ({ src: s, cap: t.lang === "ar" ? "Original message (Arabic)" : "Original message" })), "Original message"); }
+      else if (v.dataset.li) { const p = L[+v.dataset.li]; open([{ src: p.img, cap: `${p.name} · ${p.program}` }], "LinkedIn post"); }
+      else if (v.dataset.r) { const r = R[+v.dataset.r]; open([{ src: r.img, cap: r.text }], "Original message"); }
+      else if (v.dataset.open) open([{ src: v.dataset.open, cap: v.dataset.cap || "" }], v.dataset.cap || "");
+    });
+    $("#lbClose").addEventListener("click", close);
+    $("#lbPrev").addEventListener("click", () => show(cur - 1));
+    $("#lbNext").addEventListener("click", () => show(cur + 1));
+    lb.addEventListener("click", (e) => { if (e.target.classList.contains("lb-stage")) close(); });
+    document.addEventListener("keydown", (e) => { if (lb.hidden) return; if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
+    if (featured) $("#tCta").href = courseUrl(featured);
+  }
   function notfound() { A.header(""); A.footer(); }
   function info() {
     A.header(document.body.dataset.key || "");
@@ -694,5 +767,5 @@
     A.reveal();
   }
 
-  ({ home, catalog, course, learn, notfound, info, events }[page] || function () {})();
+  ({ home, catalog, course, learn, notfound, info, events, testimonials }[page] || function () {})();
 })();

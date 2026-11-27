@@ -93,10 +93,11 @@ window.EVENTS = [
     date: "",
     place: "NBN Conference",
     caption:
-      "AI Bel Araby partnered with the Nano Bio Nexus Conference and gave a talk on personalized learning and AI chatbots.",
+      "AI Bel Araby partnered with the Nano Bio Nexus Conference, gave a talk on personalized learning and AI chatbots, and received a certificate of appreciation for its participation.",
     photos: [
       { src: "nano-bio-nexus-1.jpg", alt: "Speaking at the NBN Conference" },
-      { src: "nano-bio-nexus-2.jpg", alt: "Partnership announcement", fit: "contain" }
+      { src: "nano-bio-nexus-2.jpg", alt: "Partnership announcement", fit: "contain" },
+      { src: "nano-bio-nexus-3.jpg", alt: "Certificate of appreciation for AI Bel Araby" }
     ]
   },
   {
