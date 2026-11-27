@@ -189,7 +189,7 @@
   const TYPE_LABEL = { video: "Recorded session", lab: "Hands-on lab", reading: "Reading", quiz: "Quiz" };
   const pad2 = (n) => String(n).padStart(2, "0");
   const sessionTools = (c) => Array.from(new Set(allLessons(c).flatMap((l) => l.tools || [])));
-  const phoneHref = (p) => "tel:" + String(p || "").replace(/[^0-9+]/g, "");
+  const phoneHref = () => SITE.contactLink || "https://wa.me/message/LEK2HAWRA4MQE1";
   const typeIcon = (t) => ({ video: "play", lab: "lab", reading: "reading", quiz: "target" }[t] || "play");
 
   /* ---------- page chrome ---------- */
@@ -275,7 +275,7 @@
         </div>
         <div>
           <h4>Contact</h4>
-          ${SITE.contactPhone ? `<a href="${phoneHref(SITE.contactPhone)}">For more details: ${esc(SITE.contactPhone)}</a>` : ""}
+          ${SITE.contactPhone ? `<a href="${phoneHref()}" target="_blank" rel="noopener">For more details: ${esc(SITE.contactPhone)}</a>` : ""}
           ${SITE.contactEmail ? `<a href="mailto:${esc(SITE.contactEmail)}">${esc(SITE.contactEmail)}</a>` : ""}
           ${!SITE.contactPhone && !SITE.contactEmail ? `<span class="muted-light">Follow us for new sessions</span>` : ""}
         </div>

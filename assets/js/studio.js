@@ -216,6 +216,7 @@
       fld("Platform name", "site.name"),
       fld("Slogan", "site.slogan"),
       fld("Contact phone", "site.contactPhone", { ph: "0101 3949 760" }),
+      fld("WhatsApp contact link", "site.contactLink", { ph: "https://wa.me/message/…", full: true }),
       fld("Contact email", "site.contactEmail", { ph: "hello@yourdomain.com" })
     ].concat(["facebook", "instagram", "linkedin", "youtube", "tiktok", "telegram", "whatsapp"].map((k) => fld(k[0].toUpperCase() + k.slice(1), "site.social." + k, { ph: "https://…" }))).join("");
   }

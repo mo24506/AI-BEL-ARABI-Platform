@@ -29,6 +29,8 @@ window.SITE = {
   description:
     "A learning platform for AI in science and biotechnology: hands-on courses for life-science students.",
   contactPhone: "0101 3949 760",
+  // Every "Contact us", "WhatsApp" and "For more details" button opens this link
+  contactLink: "https://wa.me/message/LEK2HAWRA4MQE1",
   contactEmail: "",
   social: {
     facebook: "",
@@ -328,7 +330,7 @@ window.COURSES = [
     faq: [
       { q: "Do I need coding experience?", a: "No. Session 02 starts from your very first line of Python, and every demo runs in Google Colab in your browser." },
       { q: "Are the sessions live or recorded?", a: "All 12 sessions are recorded, so you can learn at your own pace and rewatch any part." },
-      { q: "How can I get more details?", a: "Call or message us on 0101 3949 760." }
+      { q: "How can I get more details?", a: "Message us on WhatsApp using the \"For more details\" button on this page." }
     ]
   },
   {

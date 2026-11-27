@@ -140,7 +140,7 @@
   }
 
   /* ================= CATALOG ================= */
-  const WA = () => "https://wa.me/2" + String(SITE.contactPhone || "").replace(/[^0-9]/g, "");
+  const WA = () => A.phoneHref();
   const STATUS = { upcoming: "Upcoming", open: "Registration open", soon: "Coming soon" };
   function infoCard(c) {
     return `<article class="ccard poster reveal">
@@ -187,7 +187,7 @@
               ${c.badge ? `<span class="chip chip-red">${esc(c.badge)}</span>` : ""}
               <p class="muted" style="margin-top:12px;font-size:.9rem">${esc(STATUS[c.status] || "")}</p>
               <a class="btn btn-primary btn-lg" href="${WA()}" target="_blank" rel="noopener">${icon("chat")} Register on WhatsApp</a>
-              <a class="contact-line" href="${A.phoneHref(SITE.contactPhone)}">${icon("chat")}<span>Or call us<b>${esc(SITE.contactPhone || "")}</b></span></a>
+              <a class="contact-line" href="${A.phoneHref()}" target="_blank" rel="noopener">${icon("chat")}<span>Or message us<b>${esc(SITE.contactPhone || "")}</b></span></a>
             </div>
           </div>
         </aside>
@@ -408,7 +408,7 @@
                 <div>${icon("globe")}Watch on any device</div>
                 <div>${icon("spark")}Certificate of completion</div>
               </div>
-              ${SITE.contactPhone ? `<a class="contact-line" href="${A.phoneHref(SITE.contactPhone)}">${icon("chat")}<span>For more details<b>${esc(SITE.contactPhone)}</b></span></a>` : ""}
+              ${SITE.contactPhone ? `<a class="contact-line" href="${A.phoneHref()}" target="_blank" rel="noopener">${icon("chat")}<span>For more details<b>${esc(SITE.contactPhone)}</b></span></a>` : ""}
               <div class="share-row">
                 <button class="btn btn-ghost btn-sm" id="copyLink">${icon("link")} Copy link</button>
                 ${navigator.share ? `<button class="btn btn-ghost btn-sm" id="shareBtn">${icon("arrow")} Share</button>` : ""}
@@ -960,7 +960,7 @@
     A.footer();
     fillIcons(document);
     const ph = $("[data-phone]");
-    if (ph && SITE.contactPhone) { ph.hidden = false; ph.href = A.phoneHref(SITE.contactPhone); ph.innerHTML = `${icon("chat")} For details: ${esc(SITE.contactPhone)}`; }
+    if (ph && SITE.contactPhone) { ph.hidden = false; ph.href = A.phoneHref(); ph.target = "_blank"; ph.rel = "noopener"; ph.innerHTML = `${icon("chat")} For details: ${esc(SITE.contactPhone)}`; }
     A.reveal();
   }
 
