@@ -968,3 +968,4 @@ button.lt-hero:hover img { transform: scale(1.03); }
   .lab-cta { padding: 30px 24px; }
 }
 .lt-facts div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.ig { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; } .ig a { border-radius: 12px; overflow: hidden; aspect-ratio: 1; display: block; } .ig img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; } .ig a:hover img { transform: scale(1.05); }

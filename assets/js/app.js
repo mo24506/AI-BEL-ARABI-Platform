@@ -177,6 +177,7 @@
           ${(c.outcomes || []).length ? `<section class="panel"><h2>${esc(c.outcomesTitle || "What you'll learn")}</h2><ul class="clean outcomes">${c.outcomes.map((o) => `<li>${icon("check")}<span>${esc(o)}</span></li>`).join("")}</ul></section>` : ""}
           ${c.bonus ? `<section class="panel bonus"><span class="bonus-ico">${icon("spark")}</span><div><h2 style="font-size:1.3rem;margin-bottom:6px">Bonus</h2><p>${esc(c.bonus)} for every registered student.</p></div></section>` : ""}
           ${c.graduates ? `<a class="panel grad-link" href="${esc(c.graduates)}"><div><h2 style="font-size:1.3rem;margin-bottom:6px">Meet the graduates</h2><p>See students who completed this ${onsite ? "training" : "course"}.</p></div>${icon("arrow")}</a>` : ""}
+          ${(c.gallery || []).length ? `<section class="panel"><h2>Inside the lab</h2><div class="ig">${c.gallery.map((f) => `<a href="assets/img/onsite/${esc(f)}" target="_blank" rel="noopener"><img src="assets/img/onsite/thumbs/${esc(f)}" alt="${esc(c.title)} lab photo" loading="lazy"></a>`).join("")}</div></section>` : ""}
           <section class="panel"><h2 style="font-size:1.3rem">Details and dates</h2><p>For the schedule, fees and registration, message us on WhatsApp at <b>${esc(SITE.contactPhone || "")}</b>.</p></section>
         </div>
         <aside class="side">
