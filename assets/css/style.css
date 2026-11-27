@@ -157,7 +157,7 @@ p { margin: 0; }
 @media (max-width: 960px) { .hero-fade { background: linear-gradient(180deg, rgba(15,15,17,.2) 0%, rgba(15,15,17,.85) 45%); } }
 .hero-inner { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center; padding: 96px 0 72px; min-height: min(86vh, 780px); }
 .hero h1 { margin: 22px 0 18px; font-size: clamp(2.8rem, 6.4vw, 5.4rem); line-height: 0.98; letter-spacing: -0.035em; }
-.hero h1 .accent { color: var(--red-300); font-style: italic; font-weight: 600; }
+.hero h1 .accent { font-family: "Playfair Display", "Times New Roman", Georgia, serif; font-style: italic; font-weight: 800; letter-spacing: -0.02em; color: #e3243b; padding-right: 0.06em; }
 .hero h1 .line { display: block; }
 .hero-ar { width: fit-content; max-width: 100%; font-size: clamp(1.15rem, 2vw, 1.45rem); color: rgba(255, 255, 255, 0.82); margin-bottom: 14px; }
 .hero-sub { font-size: 1.1rem; color: rgba(255, 255, 255, 0.66); max-width: 540px; }
