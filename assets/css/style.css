@@ -795,3 +795,20 @@ body.learn .acc.commercial { background: rgba(191, 24, 42, 0.18); color: var(--r
   .tp-award { min-height: 0; aspect-ratio: 3 / 4; max-height: 520px; }
   .tlb .lb-stage { grid-template-columns: 44px minmax(0, 1fr) 44px; }
 }
+/* original + translation */
+.tq { display: grid; gap: 12px; }
+.t-orig { font-family: var(--f-ar); white-space: pre-line; font-size: 1.08rem; line-height: 1.85; color: var(--text); }
+.t-orig[lang="arz-Latn"] { font-family: var(--f-body); font-style: italic; }
+.t-en { font-size: .93rem; line-height: 1.6; color: var(--muted); padding-top: 12px; border-top: 1px dashed var(--line); }
+.t-en span { display: block; font-family: var(--f-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 4px; }
+.t-en.solo { color: var(--text); font-size: 1rem; border: 0; padding: 0; }
+.tcard blockquote::before { content: none; }
+.tcard blockquote.clamp { display: block; -webkit-line-clamp: unset; max-height: 17em; overflow: hidden; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }
+.tf-card blockquote .t-orig { font-size: 1.15rem; }
+.tf-card.big blockquote { font-family: var(--f-body); font-size: 1rem; }
+.tf-card.big .t-orig { color: #fff; font-size: clamp(1.2rem, 1.8vw, 1.45rem); line-height: 1.8; }
+.tf-card.big .t-en { color: rgba(255,255,255,.6); border-top-color: rgba(255,255,255,.15); }
+.tf-card.big .t-en span { color: rgba(255,255,255,.4); }
+.tr-b { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; border-radius: 14px; text-align: start; }
+.tr-b b { font-family: var(--f-ar); font-weight: 500; font-size: .95rem; align-self: stretch; text-align: right; }
+.tr-b small { color: var(--muted); font-size: .76rem; }

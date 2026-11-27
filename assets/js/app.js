@@ -673,12 +673,13 @@
     const bubbleTexts = T.filter((t) => !t.featured).slice(0, 10).map((t) => t.quote.split(/[.!]/)[0]);
     $("#thBubbles").innerHTML = bubbleTexts.map((q, i) => `<span class="b b${i % 5}">${esc(q)}.</span>`).join("");
     const quoteIco = `<svg class="qmark" viewBox="0 0 48 36" aria-hidden="true"><path fill="currentColor" d="M0 36V22.5C0 9.6 6.2 2.1 18.5 0l2 4.6C13.4 6.5 9.8 10.7 9.6 17H19v19H0zm27 0V22.5C27 9.6 33.2 2.1 45.5 0l2 4.6C40.4 6.5 36.8 10.7 36.6 17H46v19H27z"/></svg>`;
-    const meta = (t) => `<div class="tcard-meta"><span class="tavatar">${icon("users")}</span><span><b>${esc(K[t.kind] ? K[t.kind] + " student" : "Student")}</b><small>${t.lang === "ar" ? "Translated from Arabic · " : ""}via WhatsApp</small></span></div>`;
+    const body = (t, cls = "") => `<div class="tq ${cls}">${t.original ? `<p class="t-orig" ${/[\u0600-\u06FF]/.test(t.original) ? 'lang="ar" dir="rtl"' : 'lang="arz-Latn"'}>${esc(t.original)}</p><p class="t-en"><span>English</span>${esc(t.quote)}</p>` : `<p class="t-en solo">${esc(t.quote)}</p>`}</div>`;
+    const meta = (t) => `<div class="tcard-meta"><span class="tavatar">${icon("users")}</span><span><b>${esc(K[t.kind] ? K[t.kind] + " student" : "Student")}</b><small>via WhatsApp</small></span></div>`;
 
     // featured
     const F = T.filter((t) => t.featured);
     $("#tFeatured").innerHTML = F.map((t, i) => `<figure class="tf-card ${i === 0 ? "big" : ""}">
-      ${quoteIco}<blockquote>${esc(i === 0 ? t.quote : t.quote)}</blockquote>
+      ${quoteIco}<blockquote>${body(t)}</blockquote>
       <figcaption>${meta(t)}<button class="tview" data-id="${t.id}">${icon("eye")} View original</button></figcaption></figure>`).join("");
 
     // linkedin
@@ -692,16 +693,16 @@
     const rest = T.filter((t) => !t.featured);
     const counts = {}; rest.forEach((t) => (counts[t.kind] = (counts[t.kind] || 0) + 1));
     $("#tFilters").innerHTML = `<button class="evf-b is-on" data-f="all">All <i>${rest.length}</i></button>` + Object.keys(K).filter((k) => counts[k]).map((k) => `<button class="evf-b" data-f="${k}">${esc(K[k])} <i>${counts[k]}</i></button>`).join("");
-    const LONG = 230;
+    const LONG = 360;
     $("#tWall").innerHTML = rest.map((t) => {
-      const long = t.quote.length > LONG;
+      const long = t.quote.length + (t.original || "").length > LONG;
       return `<figure class="tcard" data-kind="${t.kind}">
         <span class="tkind">${esc(K[t.kind] || "")}</span>
-        <blockquote class="${long ? "clamp" : ""}">${esc(t.quote)}</blockquote>
+        <blockquote class="${long ? "clamp" : ""}">${body(t)}</blockquote>
         ${long ? `<button class="tmore">Read more</button>` : ""}
         <figcaption>${meta(t)}<button class="tview icon" data-id="${t.id}" aria-label="View original message">${icon("eye")}</button></figcaption></figure>`;
     }).join("");
-    $("#tReactions").innerHTML = `<span class="tr-l">Quick reactions</span>` + R.map((r, i) => `<button class="tr-b" data-r="${i}">“${esc(r.text)}”</button>`).join("");
+    $("#tReactions").innerHTML = `<span class="tr-l">Quick reactions</span>` + R.map((r, i) => `<button class="tr-b" data-r="${i}"><b lang="ar" dir="rtl">${esc(r.original || "")}</b><small>${esc(r.text)}</small></button>`).join("");
 
     $("#tFilters").addEventListener("click", (e) => {
       const b = e.target.closest(".evf-b"); if (!b) return;
