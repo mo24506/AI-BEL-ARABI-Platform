@@ -96,7 +96,7 @@
           </div>
         </div>
         <div class="featured-body">
-          <div><span class="chip chip-red">${esc(featured.level || "")}</span> <span class="chip">${esc(featured.price || "Free")}</span></div>
+          <div><span class="chip chip-red">${esc(featured.level || "")}</span></div>
           <h3>${esc(featured.title)}</h3>
           ${featured.titleAr ? `<p class="ar" lang="ar" dir="rtl">${esc(featured.titleAr)}</p>` : ""}
           <p>${esc(featured.subtitle || "")}</p>
