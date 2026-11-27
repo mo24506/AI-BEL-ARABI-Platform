@@ -27,7 +27,7 @@ window.SITE = {
   slogan: "When AI Meets Biotechnology",
   sloganAr: "",
   description:
-    "A free learning platform for AI in science and biotechnology: hands-on courses for life-science students.",
+    "A learning platform for AI in science and biotechnology: hands-on courses for life-science students.",
   contactPhone: "0101 3949 760",
   contactEmail: "",
   social: {
@@ -52,7 +52,6 @@ window.COURSES = [
     featured: true,
     level: "No coding experience needed",
     language: "Arabic, with English scientific terms",
-    price: "Free",
     highlights: [
       { value: "12", label: "Recorded sessions" },
       { value: "24", label: "Real AI tools" },
@@ -329,7 +328,6 @@ window.COURSES = [
     faq: [
       { q: "Do I need coding experience?", a: "No. Session 02 starts from your very first line of Python, and every demo runs in Google Colab in your browser." },
       { q: "Are the sessions live or recorded?", a: "All 12 sessions are recorded, so you can learn at your own pace and rewatch any part." },
-      { q: "Is the course really free?", a: "Yes. Every session and every material is free to watch and download." },
       { q: "How can I get more details?", a: "Call or message us on 0101 3949 760." }
     ]
   },

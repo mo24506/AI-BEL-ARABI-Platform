@@ -48,7 +48,7 @@
     $("#heroStart").href = courseUrl(featured);
 
     $("#heroMeta").innerHTML = [
-      ["spark", "100% free"],
+      ["layers", "12 recorded sessions"],
       ["clock", "Learn at your own pace"],
       ["lab", "Hands-on demo every session"],
       ["target", "Progress tracking"]
@@ -82,7 +82,7 @@
       <div class="stat"><b>${sum("lessons")}</b><span>Recorded sessions</span></div>
       <div class="stat"><b>${sum("aiTools")}</b><span>Real AI tools</span></div>
       <div class="stat"><b>${pad(sum("modules"))}</b><span>Learning modules</span></div>
-      <div class="stat"><b><em>Free</em></b><span>For every learner, always</span></div>`;
+      <div class="stat"><b><em>2000+</em></b><span>Students celebrated</span></div>`;
 
     const p = progress.percent(featured);
     $("#featuredCourse").innerHTML = `
@@ -392,7 +392,7 @@
               <span class="play-btn"><svg class="ico" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg></span>
             </a>
             <div class="side-body">
-              <div class="price-big">${esc(c.price || "Free")}<small>full access</small></div>
+              ${c.price ? `<div class="price-big">${esc(c.price)}</div>` : ""}
               <a class="btn btn-primary btn-lg" href="${go.href}">${go.label} ${icon("arrow")}</a>
               ${go.started ? `<p class="muted" style="font-size:.85rem;margin-top:10px">Up next: Session ${go.lesson ? pad(go.lesson._gi + 1) + " · " + esc(go.lesson.title) : ""}</p>` : ""}
               <div class="side-prog">
@@ -406,7 +406,7 @@
                 <div>${icon("download")}Downloadable slides & datasets</div>
                 <div>${icon("notes")}Personal notes for every session</div>
                 <div>${icon("globe")}Watch on any device</div>
-                <div>${icon("spark")}Free, no account needed</div>
+                <div>${icon("spark")}Certificate of completion</div>
               </div>
               ${SITE.contactPhone ? `<a class="contact-line" href="${A.phoneHref(SITE.contactPhone)}">${icon("chat")}<span>For more details<b>${esc(SITE.contactPhone)}</b></span></a>` : ""}
               <div class="share-row">

@@ -20,7 +20,7 @@ window.WEBINARS = [
     date: { day: "23", month: "Oct", year: "2025", weekday: "Thursday", time: "8:00 PM Cairo time" },
     speaker: { name: "Dr. Lucas Boldrini", role: "Technical Consultant at IBBIS, Paris, France · Former Team Experience Manager at the iGEM Foundation · Founder of the iGEM Space Initiative" },
     about: "Exploring how AI and synthetic biology intersect to shape a safer and more responsible biotechnological future.",
-    tags: ["Free", "Certificate provided", "International speaker"],
+    tags: ["Certificate provided", "International speaker"],
     posters: ["synbio.jpg"],
     review: "testimonials.html"
   },

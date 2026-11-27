@@ -281,7 +281,7 @@
         </div>
       </div>
       <div class="wrap footer-bottom">
-        <span>© ${year} ${esc(SITE.name)}. Free education, always.</span>
+        <span>© ${year} ${esc(SITE.name)}. When AI Meets Biotechnology.</span>
         <span class="mono">AI × BIOTECH</span>
       </div>`;
     document.body.append(el);

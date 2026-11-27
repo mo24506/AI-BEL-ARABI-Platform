@@ -150,7 +150,7 @@
           ${fld("Level", b + ".level", { ph: "Beginner / Intermediate / Advanced" })}
           ${fld("Language", b + ".language")}
           ${fld("Status", b + ".status", { select: [["open", "Open"], ["soon", "Coming soon"]] })}
-          ${fld("Price label", b + ".price", { ph: "Free" })}
+          ${fld("Price label", b + ".price", { ph: "e.g. 1500 EGP" })}
           ${fld("Tags", b + ".tags", { kind: "csv", full: true, help: "comma separated" })}
           ${fld("Description", b + ".description", { area: true, rows: 5, full: true })}
           ${fld("What you'll learn", b + ".outcomes", { kind: "lines", full: true, help: "one per line" })}
@@ -253,7 +253,7 @@
   $("#addCourse").addEventListener("click", () => {
     const title = prompt("Course title?", "New course"); if (!title) return;
     let id = slug(title); while (state.courses.some((c) => c.id === id)) id += "-2";
-    state.courses.push({ id, title, titleAr: "", subtitle: "", status: "soon", featured: false, level: "", language: "Arabic", price: "Free", tags: [], description: "", outcomes: [], audience: [], prerequisites: [], tools: [], instructors: [], modules: [{ id: id + "-m1", title: "Module 1", summary: "", lessons: [] }], faq: [] });
+    state.courses.push({ id, title, titleAr: "", subtitle: "", status: "soon", featured: false, level: "", language: "Arabic", price: "", tags: [], description: "", outcomes: [], audience: [], prerequisites: [], tools: [], instructors: [], modules: [{ id: id + "-m1", title: "Module 1", summary: "", lessons: [] }], faq: [] });
     ci = state.courses.length - 1; save(); render();
   });
 
