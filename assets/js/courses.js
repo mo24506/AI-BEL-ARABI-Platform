@@ -417,7 +417,8 @@ window.COURSES = [
     facts: [["Format", "On-site training"], ["Length", "25 hours"], ["In partnership with", "Alla Gene"]],
     description: "An on-site training in partnership with Alla Gene on applying artificial intelligence to cancer research and therapy.",
     outcomes: [],
-    bonus: ""
+    bonus: "",
+    skills: ["AI in oncology research", "AI-assisted therapy decisions", "Hands-on lab work"]
   },
   {
     id: "junior-biotechnologist",
@@ -432,6 +433,28 @@ window.COURSES = [
     description: "A hands-on training customized for first- and second-year students to master the fundamentals of biotechnology in 12 days.",
     outcomes: [],
     bonus: "",
-    graduates: "students.html#junior-biotechnologist"
+    graduates: "students.html#junior-biotechnologist",
+    hero: "junior-01.jpg",
+    gallery: ["junior-01.jpg","junior-02.jpg","junior-03.jpg","junior-04.jpg","junior-05.jpg","junior-06.jpg","junior-07.jpg","junior-08.jpg","junior-09.jpg"],
+    skills: ["Lab safety and good lab practice", "Micropipetting", "Blood sample handling", "DNA extraction protocol", "Working from a written protocol"]
+  },
+  {
+    id: "applied-cosmetic-biotechnology",
+    mode: "onsite",
+    title: "Applied Cosmetic Biotechnology",
+    subtitle: "Hands-on training connecting biotechnology to cosmetic product development, from formulation to quality control.",
+    status: "open",
+    badge: "Hands-on lab",
+    cover: "../onsite/cosmetic-group.jpg",
+    tags: ["Cosmetic Biotechnology"],
+    facts: [["Format", "On-site training"], ["Instructor", "Dr. Mohamed Zahrah"]],
+    description: "A practical lab training where students formulate cosmetic products themselves and learn how biotechnology drives modern cosmetic development, safety and quality control.",
+    outcomes: ["Cosmetic formulation and product development", "Natural ingredient extraction", "Working with lab equipment and protocols", "Quality control in cosmetics", "Regulations and safety evaluation"],
+    outcomesTitle: "What you will practice",
+    bonus: "",
+    graduates: "students.html#applied-cosmetic-biotechnology",
+    hero: "cosmetic-05.jpg",
+    gallery: ["cosmetic-05.jpg","cosmetic-01.jpg","cosmetic-02.jpg","cosmetic-03.jpg","cosmetic-04.jpg","cosmetic-06.jpg","cosmetic-07.jpg","cosmetic-08.jpg","cosmetic-group.jpg"],
+    skills: ["Formulation", "Extraction", "Micropipetting", "Quality control"]
   }
 ];

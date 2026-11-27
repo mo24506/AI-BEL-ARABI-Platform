@@ -46,7 +46,6 @@
     const go = resumeTarget(featured);
 
     $("#heroStart").href = courseUrl(featured);
-    $("#ctaStart").href = go.href;
 
     $("#heroMeta").innerHTML = [
       ["spark", "100% free"],
@@ -842,6 +841,60 @@
     $(".lb-stage").addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
     if (featured) $("#shCta").href = courseUrl(featured);
   }
+  function onsite() {
+    A.header("onsite");
+    A.footer();
+    const L = COURSES.filter((c) => c.mode === "onsite");
+    const big = (f) => "assets/img/onsite/" + f, th = (f) => "assets/img/onsite/thumbs/" + f;
+    const photos = L.reduce((a, c) => a + (c.gallery || []).length, 0);
+    $("#lhPhoto").style.backgroundImage = `url('${big("cosmetic-05.jpg")}')`;
+    $("#lhStats").innerHTML = [[L.length, "lab trainings"], [photos, "photos from the bench"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
+    $("#labWa").href = WA();
+    $("#labList").innerHTML = L.map((c, i) => {
+      const g = c.gallery || [];
+      const facts = (c.facts || []).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("");
+      return `<section class="lt ${i % 2 ? "alt" : ""}" id="${esc(c.id)}">
+        <div class="wrap">
+          <div class="lt-grid">
+            <div class="lt-media">
+              ${g.length ? `<button class="lt-hero" data-c="${i}" data-k="0"><img src="${big(g[0])}" alt="${esc(c.title)} in the lab" loading="${i ? "lazy" : "eager"}"><span class="lt-count">${icon("expand")} ${g.length} photos</span></button>`
+                : `<div class="lt-hero poster"><img src="assets/img/courses/${esc(c.cover)}" alt="${esc(c.title)} poster" loading="lazy"></div>`}
+            </div>
+            <div class="lt-sheet">
+              <div class="lt-label"><span>Training ${pad(i + 1)}</span>${c.badge ? `<span class="lt-badge">${esc(c.badge)}</span>` : ""}</div>
+              <h2>${esc(c.title)}</h2>
+              <p>${esc(c.subtitle || "")}</p>
+              <dl class="lt-facts">${facts}</dl>
+              ${(c.skills || []).length ? `<div class="lt-skills"><span>On the bench</span>${c.skills.map((x) => `<i>${esc(x)}</i>`).join("")}</div>` : ""}
+              <div class="lt-actions">
+                <a class="btn btn-primary" href="${WA()}" target="_blank" rel="noopener">Book a seat</a>
+                <a class="btn btn-ghost" href="${courseUrl(c)}">Full details ${icon("arrow")}</a>
+                ${c.graduates ? `<a class="lt-grad" href="${esc(c.graduates)}">Meet the graduates ${icon("chevron")}</a>` : ""}
+              </div>
+            </div>
+          </div>
+          ${g.length > 1 ? `<div class="lt-strip" role="list">${g.slice(1).map((f, k) => `<button role="listitem" class="lt-shot" data-c="${i}" data-k="${k + 1}"><img src="${th(f)}" alt="${esc(c.title)} lab photo ${k + 2}" loading="lazy"></button>`).join("")}</div>` : ""}
+        </div>
+      </section>`;
+    }).join("");
+    const lb = $("#lb"), img = $("#lbImg");
+    $("#lbClose").innerHTML = icon("x"); $("#lbPrev").innerHTML = icon("left"); $("#lbNext").innerHTML = icon("chevron");
+    let set = [], cur = 0, last = null;
+    const show = (k) => { cur = (k + set.length) % set.length; img.classList.remove("ready"); img.onload = () => img.classList.add("ready"); img.src = big(set[cur]); $("#lbCount").textContent = `${cur + 1} / ${set.length}`; };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ""; img.src = ""; if (last) last.focus(); };
+    $("#labList").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-c]"); if (!b) return;
+      const c = L[+b.dataset.c]; set = c.gallery; last = b; $("#lbTitle").textContent = c.title; $("#lbCap").textContent = "";
+      lb.hidden = false; document.body.style.overflow = "hidden"; show(+b.dataset.k); $("#lbClose").focus();
+    });
+    $("#lbClose").addEventListener("click", close);
+    $("#lbPrev").addEventListener("click", () => show(cur - 1));
+    $("#lbNext").addEventListener("click", () => show(cur + 1));
+    lb.addEventListener("click", (e) => { if (e.target.classList.contains("lb-stage")) close(); });
+    document.addEventListener("keydown", (e) => { if (lb.hidden) return; if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
+    let sx = null; $(".lb-stage").addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    $(".lb-stage").addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
+  }
   function notfound() { A.header(""); A.footer(); }
   function info() {
     A.header(document.body.dataset.key || "");
@@ -852,5 +905,5 @@
     A.reveal();
   }
 
-  ({ home, catalog, course, learn, notfound, info, events, testimonials, students }[page] || function () {})();
+  ({ home, catalog, course, learn, notfound, info, events, testimonials, students, onsite }[page] || function () {})();
 })();

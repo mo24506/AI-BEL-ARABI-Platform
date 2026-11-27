@@ -267,7 +267,7 @@
         <div>
           <h4>Learn</h4>
           <a href="courses.html">Online Courses</a>
-          ${COURSES.slice(0, 4).map((c) => `<a href="course.html?id=${encodeURIComponent(c.id)}">${esc(c.title)}</a>`).join("")}
+          ${COURSES.filter((c) => (c.mode || "online") === "online").slice(0, 4).map((c) => `<a href="course.html?id=${encodeURIComponent(c.id)}">${esc(c.title)}</a>`).join("")}
         </div>
         <div>
           <h4>Community</h4>

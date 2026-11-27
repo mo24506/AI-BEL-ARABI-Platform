@@ -19,34 +19,34 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body data-page="catalog" data-mode="onsite">
-
+<body data-page="onsite" data-key="onsite" class="lab">
 <main id="main">
-  <section class="page-head">
-    <div class="wrap">
+  <section class="lh">
+    <div class="lh-photo" id="lhPhoto" aria-hidden="true"></div>
+    <div class="wrap lh-inner">
       <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Onsite Courses</span></div>
-      <h1>Onsite Courses</h1>
-      <p>Hands-on trainings in the lab and the classroom with the AI Bel Araby team.</p>
+      <span class="lh-tag">Lab coats on</span>
+      <h1>Learn it at the bench.</h1>
+      <p>Hands-on trainings in the lab with the AI Bel Araby team. Real samples, real equipment, real protocols.</p>
+      <div class="lh-stats" id="lhStats"></div>
     </div>
   </section>
-  <section class="section" style="padding-top:0">
+  <div id="labList"></div>
+  <section class="section" style="padding-top:20px">
     <div class="wrap">
-      <div class="toolbar">
-        <label class="search"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="sr-only">Search</span><input id="q" type="search" placeholder="Search courses, modules or sessions…"></label>
-      </div>
-      <div class="filters" id="filters" style="margin-bottom:28px"></div>
-      <div class="grid-courses" id="courseGrid"></div>
-      <div class="live-strip">
-        <div><span class="eyebrow">From our live online sessions</span><h3>Real sessions, real tools.</h3><p class="muted">Snapshots from live classes: a student's drug-repurposing project and hands-on sequence analysis.</p></div>
-        <figure><img src="assets/img/courses/live-nfkb.jpg" alt="Student presentation: Targeting NF-κB signaling with AI-driven drug repurposing" loading="lazy"><figcaption>Student project: AI-driven drug repurposing</figcaption></figure>
-        <figure><img src="assets/img/courses/live-geneious.jpg" alt="Live demo of sequence analysis software" loading="lazy"><figcaption>Live demo: sequence analysis</figcaption></figure>
+      <div class="lab-cta">
+        <div><span class="eyebrow light">Next cohort</span><h2>Book your seat in the lab.</h2><p>Seats are limited in every onsite training. Message us for dates and fees.</p></div>
+        <a class="btn btn-primary btn-lg" id="labWa" href="#" target="_blank" rel="noopener">Message us on WhatsApp</a>
       </div>
     </div>
   </section>
 </main>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-top"><div><b id="lbTitle"></b><span id="lbCount"></span></div><button class="lb-btn" id="lbClose" aria-label="Close"></button></div>
+  <div class="lb-stage"><button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous"></button><figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure><button class="lb-btn lb-next" id="lbNext" aria-label="Next"></button></div>
+</div>
 <script src="assets/js/courses.js"></script>
 <script src="assets/js/core.js"></script>
-<script src="assets/js/helix.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>
