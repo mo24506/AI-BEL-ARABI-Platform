@@ -10,6 +10,9 @@
    Add  fit: "contain"  to a photo that must not be cropped (posters).
    ===================================================================== */
 
+/* Totals shown at the top of the Events page (all-time, not just the events listed below) */
+window.EVENT_STATS = { events: 40, venues: 32 };
+
 window.EVENT_TYPES = {
   conference: "Conferences & summits",
   workshop: "Workshops",

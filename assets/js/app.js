@@ -597,18 +597,8 @@
 
     // hero mosaic from each event's lead photo
     $("#evMosaic").innerHTML = EV.slice(0, 12).map((e) => `<span style="background-image:url('${th(e.photos[0])}')"></span>`).join("");
-    $("#evStats").innerHTML = [[EV.length, "events"], [total, "photos"], [places.size, "venues"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
-
-    // filters + jump
-    const counts = {};
-    EV.forEach((e) => (counts[e.type] = (counts[e.type] || 0) + 1));
-    const keys = Object.keys(TYPES).filter((k) => counts[k]);
-    $("#evFilters").innerHTML = `<button class="evf-b is-on" data-f="all" role="tab" aria-selected="true">All <i>${EV.length}</i></button>` +
-      keys.map((k) => `<button class="evf-b" data-f="${k}" role="tab" aria-selected="false">${esc(TYPES[k])} <i>${counts[k]}</i></button>`).join("");
-    const jump = $("#evJump");
-    const fillJump = (f) => { jump.innerHTML = `<option value="">Jump to an event…</option>` + EV.filter((e) => f === "all" || e.type === f).map((e) => `<option value="${esc(e.id)}">${esc(e.title)}</option>`).join(""); };
-    fillJump("all");
-    jump.addEventListener("change", () => { const t = document.getElementById(jump.value); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); jump.value = ""; });
+    const ES = window.EVENT_STATS || { events: EV.length, venues: places.size };
+    $("#evStats").innerHTML = [[ES.events, "events"], [ES.venues, "venues"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
 
     // list
     $("#evList").innerHTML = EV.map((e, i) => {
@@ -633,19 +623,6 @@
         <div class="ev-collage c${shown}">${tiles}</div>
       </article>`;
     }).join("");
-
-    // filtering
-    $("#evFilters").addEventListener("click", (ev) => {
-      const b = ev.target.closest(".evf-b"); if (!b) return;
-      const f = b.dataset.f;
-      $$(".evf-b").forEach((x) => { const on = x === b; x.classList.toggle("is-on", on); x.setAttribute("aria-selected", on); });
-      let vis = 0;
-      $$(".ev").forEach((a) => { const show = f === "all" || a.dataset.type === f; a.hidden = !show; if (show) { a.classList.toggle("flip", vis % 2 === 1); a.querySelector(".ev-num").textContent = pad(++vis); } });
-      $$(".ev:not([hidden])").forEach((a) => a.classList.add("in"));
-      $("#evEmpty").hidden = vis > 0;
-      fillJump(f);
-      const bar = $("#evBar"); if (bar.getBoundingClientRect().top < 0 || window.scrollY > bar.offsetTop) window.scrollTo({ top: bar.offsetTop - 60, behavior: "smooth" });
-    });
 
     // lightbox (per event, with thumbnails)
     const lb = $("#lb"), img = $("#lbImg");
@@ -691,8 +668,8 @@
     const T = window.TESTIMONIALS || [], K = window.T_KINDS || {}, R = window.T_REACTIONS || [], L = window.T_LINKEDIN || [];
     const IMG = (f) => "assets/img/testimonials/" + f;
     const total = T.length + R.length + L.length;
-    $("#thStats").innerHTML = [[total, "student testimonials"], [L.length, "public LinkedIn posts"], [(window.EVENTS || []).length, "events"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
-    $("#tpEvents").textContent = `${(window.EVENTS || []).length} events`;
+    $("#thStats").innerHTML = [[total, "student testimonials"], [L.length, "public LinkedIn posts"], [(window.EVENT_STATS || {}).events || (window.EVENTS || []).length, "events"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
+    $("#tpEvents").textContent = `${(window.EVENT_STATS || {}).events || (window.EVENTS || []).length} events`;
     const bubbleTexts = T.filter((t) => !t.featured).slice(0, 10).map((t) => t.quote.split(/[.!]/)[0]);
     $("#thBubbles").innerHTML = bubbleTexts.map((q, i) => `<span class="b b${i % 5}">${esc(q)}.</span>`).join("");
     const quoteIco = `<svg class="qmark" viewBox="0 0 48 36" aria-hidden="true"><path fill="currentColor" d="M0 36V22.5C0 9.6 6.2 2.1 18.5 0l2 4.6C13.4 6.5 9.8 10.7 9.6 17H19v19H0zm27 0V22.5C27 9.6 33.2 2.1 45.5 0l2 4.6C40.4 6.5 36.8 10.7 36.6 17H46v19H27z"/></svg>`;
