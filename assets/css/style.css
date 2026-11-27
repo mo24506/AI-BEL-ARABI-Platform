@@ -1113,3 +1113,4 @@ body.rmd .site-header, body.rmd .site-header.is-scrolled { background: rgba(250,
   .spots { grid-template-columns: 1fr 1fr; }
   .partners { grid-template-columns: 1fr; gap: 24px; }
 }
+.ed26-in { display: grid; grid-template-columns: 1.2fr .8fr; gap: 50px; align-items: center; } .ed26 h2 { color: #fff; margin: 12px 0 14px; } .ed26 p { color: rgba(244,234,217,.68); max-width: 520px; } .ed26 .rmd-card img { aspect-ratio: 4/5; } @media (max-width: 900px) { .ed26-in { grid-template-columns: 1fr; gap: 24px; } .ed26 .rmd-card { max-width: 360px; } }
