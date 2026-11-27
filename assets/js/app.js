@@ -896,6 +896,38 @@
     let sx = null; $(".lb-stage").addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
     $(".lb-stage").addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
   }
+  function webinars() {
+    A.header("webinars");
+    A.footer();
+    const W = window.WEBINARS || [];
+    const P = (f) => "assets/img/webinars/" + f;
+    const speakers = new Set(W.map((w) => w.speaker.name)).size;
+    $("#ahStats").innerHTML = [[W.length, "episodes"], [speakers, "speakers"], ["2", "countries"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
+    $("#ahWave").innerHTML = Array.from({ length: 48 }, (_, i) => `<i style="--h:${(18 + Math.abs(Math.sin(i * 0.55) * 62 + Math.sin(i * 1.7) * 18)).toFixed(0)}%;--d:${(i * 0.06).toFixed(2)}s"></i>`).join("");
+    $("#airWa").href = WA();
+    $("#eps").innerHTML = W.map((w, i) => `<article class="ep" id="${esc(w.id)}">
+      <div class="ep-date"><span class="ep-no">EP ${pad(W.length - i)}</span><b>${esc(w.date.day)}</b><span class="ep-m">${esc(w.date.month)} ${esc(w.date.year)}</span><span class="ep-w">${esc(w.date.weekday)}</span>${w.date.time ? `<span class="ep-t">${icon("clock")} ${esc(w.date.time)}</span>` : ""}</div>
+      <div class="ep-body">
+        <span class="ep-topic">${esc(w.topic)}</span>
+        <h3>${esc(w.title)}</h3>
+        <p>${esc(w.about)}</p>
+        <div class="ep-spk"><span class="ep-mic">${icon("chat")}</span><div><b>${esc(w.speaker.name)}</b><small>${esc(w.speaker.role)}</small></div></div>
+        <div class="ep-tags">${w.tags.map((t) => `<span>${esc(t)}</span>`).join("")}${w.review ? `<a href="${esc(w.review)}">Read an attendee's review ${icon("chevron")}</a>` : ""}</div>
+      </div>
+      <div class="ep-posters ${w.posters.length > 1 ? "two" : ""}">${w.posters.map((f, k) => `<button data-w="${i}" data-k="${k}" aria-label="Open poster"><img src="${P(f)}" alt="${esc(w.title)} poster" loading="lazy"></button>`).join("")}</div>
+    </article>`).join("");
+    const lb = $("#lb"), img = $("#lbImg");
+    $("#lbClose").innerHTML = icon("x"); $("#lbPrev").innerHTML = icon("left"); $("#lbNext").innerHTML = icon("chevron");
+    let set = [], cur = 0, last = null;
+    const show = (k) => { cur = (k + set.length) % set.length; img.src = P(set[cur]); img.classList.add("ready"); $("#lbCount").textContent = set.length > 1 ? `${cur + 1} / ${set.length}` : ""; };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ""; img.src = ""; if (last) last.focus(); };
+    $("#eps").addEventListener("click", (e) => { const b = e.target.closest("[data-w]"); if (!b) return; const w = W[+b.dataset.w]; set = w.posters; last = b; $("#lbTitle").textContent = w.title; $("#lbCap").textContent = ""; $("#lbPrev").hidden = $("#lbNext").hidden = set.length < 2; lb.hidden = false; document.body.style.overflow = "hidden"; show(+b.dataset.k); $("#lbClose").focus(); });
+    $("#lbClose").addEventListener("click", close);
+    $("#lbPrev").addEventListener("click", () => show(cur - 1));
+    $("#lbNext").addEventListener("click", () => show(cur + 1));
+    lb.addEventListener("click", (e) => { if (e.target.classList.contains("lb-stage")) close(); });
+    document.addEventListener("keydown", (e) => { if (lb.hidden) return; if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
+  }
   function notfound() { A.header(""); A.footer(); }
   function info() {
     A.header(document.body.dataset.key || "");
@@ -906,5 +938,5 @@
     A.reveal();
   }
 
-  ({ home, catalog, course, learn, notfound, info, events, testimonials, students, onsite }[page] || function () {})();
+  ({ home, catalog, course, learn, notfound, info, events, testimonials, students, onsite, webinars }[page] || function () {})();
 })();

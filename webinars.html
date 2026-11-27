@@ -17,37 +17,47 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261127c">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261127d">
 </head>
-<body data-page="info" data-key="webinars">
+<body data-page="webinars" data-key="webinars" class="air">
 <main id="main">
-  <section class="page-head">
-    <div class="wrap">
-      <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Webinars</span></div>
-      <h1>Webinars</h1>
-      <p>Live online sessions on AI in science and biotechnology.</p>
+  <section class="ah">
+    <div class="wrap ah-inner">
+      <div>
+        <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Webinars</span></div>
+        <span class="onair"><i></i>On air</span>
+        <h1>Webinars</h1>
+        <p>Live online sessions with scientists from Egypt and abroad. Tune in, ask questions, and walk away with new ideas.</p>
+        <div class="ah-stats" id="ahStats"></div>
+      </div>
+      <div class="ah-wave" id="ahWave" aria-hidden="true"></div>
     </div>
   </section>
-  <section class="section" style="padding-top:56px">
+  <section class="section ep-wrap">
     <div class="wrap">
-      <div class="soon-card reveal">
-        <div class="soon-ico" data-icon="play"></div>
-        <div>
-          <span class="eyebrow">Coming soon</span>
-          <h2 style="margin-top:12px">Webinars are coming soon</h2>
-          <p>Upcoming webinars and recordings of past ones will be listed here.</p>
-          <div class="actions">
-            <a class="btn btn-primary" href="courses.html">Explore online courses</a>
-            <a class="btn btn-ghost" data-phone href="#" hidden></a>
-          </div>
-        </div>
+      <div class="ep-head"><span class="eyebrow">The broadcast log</span><h2>Every episode so far.</h2></div>
+      <div class="eps" id="eps"></div>
+    </div>
+  </section>
+  <section class="unf">
+    <div class="wrap unf-inner">
+      <img src="assets/img/webinars/unfolding.jpg" alt="AI Bel Araby post: You're not behind, you're unfolding" loading="lazy">
+      <div>
+        <p class="unf-ar" lang="ar" dir="rtl">انت مش متأخر<br>انت <em>بتستعد</em>.</p>
+        <p class="unf-en">You're not behind,<br>you're <em>unfolding</em>.</p>
+        <p class="unf-sub">Grab your lab coat and get ready. The next episode is on its way.</p>
+        <a class="btn btn-primary btn-lg" id="airWa" href="#" target="_blank" rel="noopener">Get notified on WhatsApp</a>
       </div>
-      <div class="soon-grid" aria-hidden="true"><div class="soon-ph">Content coming soon</div><div class="soon-ph">Content coming soon</div><div class="soon-ph">Content coming soon</div></div>
     </div>
   </section>
 </main>
-<script src="assets/js/courses.js?v=20261127c"></script>
-<script src="assets/js/core.js?v=20261127c"></script>
-<script src="assets/js/app.js?v=20261127c"></script>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-top"><div><b id="lbTitle"></b><span id="lbCount"></span></div><button class="lb-btn" id="lbClose" aria-label="Close"></button></div>
+  <div class="lb-stage"><button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous"></button><figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure><button class="lb-btn lb-next" id="lbNext" aria-label="Next"></button></div>
+</div>
+<script src="assets/js/courses.js?v=20261127d"></script>
+<script src="assets/js/webinars.js?v=20261127d"></script>
+<script src="assets/js/core.js?v=20261127d"></script>
+<script src="assets/js/app.js?v=20261127d"></script>
 </body>
 </html>
