@@ -21,23 +21,40 @@
 </head>
 <body data-page="events" data-key="events">
 <main id="main">
-  <section class="page-head">
-    <div class="wrap">
+  <section class="evh">
+    <div class="evh-mosaic" id="evMosaic" aria-hidden="true"></div>
+    <div class="evh-shade"></div>
+    <div class="wrap evh-inner">
       <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Events</span></div>
       <h1>Events</h1>
-      <p>Where AI Bel Araby shows up: career summits, conferences, youth summits and talks with students.</p>
-      <div class="ev-stats" id="evStats"></div>
+      <p>Where AI Bel Araby shows up: conferences, workshops, talks and career fairs with students across Egypt.</p>
+      <div class="evh-stats" id="evStats"></div>
     </div>
   </section>
-  <section class="section" style="padding-top:64px">
+
+  <div class="evbar" id="evBar">
+    <div class="wrap evbar-inner">
+      <div class="evf" id="evFilters" role="tablist" aria-label="Filter events"></div>
+      <label class="evjump"><span class="sr-only">Jump to event</span><select id="evJump"></select></label>
+    </div>
+  </div>
+
+  <section class="section evlist-wrap">
     <div class="wrap" id="evList"></div>
+    <div class="wrap"><p class="ev-empty" id="evEmpty" hidden>No events in this category yet.</p></div>
   </section>
 </main>
-<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
-  <button class="lb-btn lb-close" id="lbClose" aria-label="Close"></button>
-  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous photo"></button>
-  <figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
-  <button class="lb-btn lb-next" id="lbNext" aria-label="Next photo"></button>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-top">
+    <div><b id="lbTitle"></b><span id="lbCount"></span></div>
+    <button class="lb-btn" id="lbClose" aria-label="Close"></button>
+  </div>
+  <div class="lb-stage">
+    <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous photo"></button>
+    <figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+    <button class="lb-btn lb-next" id="lbNext" aria-label="Next photo"></button>
+  </div>
+  <div class="lb-thumbs" id="lbThumbs"></div>
 </div>
 <script src="assets/js/courses.js"></script>
 <script src="assets/js/events.js"></script>

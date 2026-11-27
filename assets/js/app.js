@@ -588,53 +588,101 @@
   function events() {
     A.header("events");
     A.footer();
-    const EV = window.EVENTS || [];
+    const EV = window.EVENTS || [], TYPES = window.EVENT_TYPES || {};
+    const MAX = 5;
+    const big = (p) => "assets/img/events/" + p.src;
+    const th = (p) => "assets/img/events/thumbs/" + p.src;
     const total = EV.reduce((a, e) => a + e.photos.length, 0);
-    $("#evStats").innerHTML = `<span><b>${EV.length}</b> events</span><span><b>${total}</b> photos</span>`;
-    const flat = [];
+    const places = new Set(EV.map((e) => (e.place || "").split("·").pop().trim()).filter(Boolean));
+
+    // hero mosaic from each event's lead photo
+    $("#evMosaic").innerHTML = EV.slice(0, 12).map((e) => `<span style="background-image:url('${th(e.photos[0])}')"></span>`).join("");
+    $("#evStats").innerHTML = [[EV.length, "events"], [total, "photos"], [places.size, "venues"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
+
+    // filters + jump
+    const counts = {};
+    EV.forEach((e) => (counts[e.type] = (counts[e.type] || 0) + 1));
+    const keys = Object.keys(TYPES).filter((k) => counts[k]);
+    $("#evFilters").innerHTML = `<button class="evf-b is-on" data-f="all" role="tab" aria-selected="true">All <i>${EV.length}</i></button>` +
+      keys.map((k) => `<button class="evf-b" data-f="${k}" role="tab" aria-selected="false">${esc(TYPES[k])} <i>${counts[k]}</i></button>`).join("");
+    const jump = $("#evJump");
+    const fillJump = (f) => { jump.innerHTML = `<option value="">Jump to an event…</option>` + EV.filter((e) => f === "all" || e.type === f).map((e) => `<option value="${esc(e.id)}">${esc(e.title)}</option>`).join(""); };
+    fillJump("all");
+    jump.addEventListener("change", () => { const t = document.getElementById(jump.value); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); jump.value = ""; });
+
+    // list
     $("#evList").innerHTML = EV.map((e, i) => {
-      const n = e.photos.length;
-      const cls = n === 1 ? "n1" : n === 2 ? "n2" : n === 3 ? "n3" : "nm";
-      const cells = 4 + (n - 1), rem = cls === "nm" ? cells % 3 : 0;
-      const tiles = e.photos.map((ph, k) => {
-        const span = rem && k === n - 1 ? (rem === 2 ? " span2" : " span3") : "";
-        const mfull = cls === "nm" && (n - 1) % 2 === 1 && k === n - 1 ? " mfull" : "";
-        const idx = flat.push({ src: "assets/img/events/" + ph.src, alt: ph.alt || e.title, cap: `${e.title}${ph.alt ? " · " + ph.alt : ""}` }) - 1;
-        return `<button class="ev-tile${ph.fit === "contain" ? " contain" : ""}${span}${mfull}" data-i="${idx}" aria-label="Open photo: ${esc(ph.alt || e.title)}">
-          <img src="assets/img/events/${esc(ph.src)}" alt="${esc(ph.alt || e.title)}" loading="${i < 2 ? "eager" : "lazy"}">
-          <span class="ev-zoom">${icon("expand")}</span></button>`;
+      const n = e.photos.length, shown = Math.min(n, MAX), more = n - shown;
+      const tiles = e.photos.slice(0, shown).map((ph, k) => {
+        const last = k === shown - 1 && more > 0;
+        return `<button class="ev-tile${ph.fit === "contain" ? " contain" : ""}" data-e="${i}" data-k="${k}" aria-label="${last ? `View all ${n} photos of ${esc(e.title)}` : "Open photo: " + esc(ph.alt || e.title)}">
+          <img src="${k === 0 ? big(ph) : th(ph)}" alt="${esc(ph.alt || e.title)}" loading="${i < 2 ? "eager" : "lazy"}" decoding="async">
+          ${last ? `<span class="ev-more"><b>+${more}</b>more photos</span>` : `<span class="ev-zoom">${icon("expand")}</span>`}</button>`;
       }).join("");
-      return `<article class="ev reveal ${i % 2 ? "flip" : ""}" id="${esc(e.id)}">
+      return `<article class="ev reveal ${i % 2 ? "flip" : ""}" id="${esc(e.id)}" data-type="${esc(e.type)}">
         <div class="ev-meta">
-          <span class="ev-num">${pad(i + 1)}</span>
-          <div class="ev-chips">${e.date ? `<span class="chip chip-red">${icon("clock")} ${esc(e.date)}</span>` : ""}${e.place ? `<span class="chip">${icon("globe")} ${esc(e.place)}</span>` : ""}</div>
+          <div class="ev-top"><span class="ev-num">${pad(i + 1)}</span><span class="ev-type">${esc(TYPES[e.type] || "")}</span></div>
           <h2>${esc(e.title)}</h2>
+          <dl class="ev-facts">
+            ${e.date ? `<div><dt>${icon("clock")}<span class="sr-only">Date</span></dt><dd>${esc(e.date)}</dd></div>` : ""}
+            ${e.place ? `<div><dt>${icon("globe")}<span class="sr-only">Place</span></dt><dd>${esc(e.place)}</dd></div>` : ""}
+          </dl>
           <p>${esc(e.caption)}</p>
-          <span class="ev-count">${n} photo${n > 1 ? "s" : ""}</span>
+          <button class="ev-all" data-e="${i}" data-k="0">${icon("expand")} View ${n} photo${n > 1 ? "s" : ""}</button>
         </div>
-        <div class="ev-collage ${cls}">${tiles}</div>
+        <div class="ev-collage c${shown}">${tiles}</div>
       </article>`;
     }).join("");
-    // lightbox
-    const lb = $("#lb"), img = $("#lbImg"), cap = $("#lbCap");
+
+    // filtering
+    $("#evFilters").addEventListener("click", (ev) => {
+      const b = ev.target.closest(".evf-b"); if (!b) return;
+      const f = b.dataset.f;
+      $$(".evf-b").forEach((x) => { const on = x === b; x.classList.toggle("is-on", on); x.setAttribute("aria-selected", on); });
+      let vis = 0;
+      $$(".ev").forEach((a) => { const show = f === "all" || a.dataset.type === f; a.hidden = !show; if (show) { a.classList.toggle("flip", vis % 2 === 1); a.querySelector(".ev-num").textContent = pad(++vis); } });
+      $$(".ev:not([hidden])").forEach((a) => a.classList.add("in"));
+      $("#evEmpty").hidden = vis > 0;
+      fillJump(f);
+      const bar = $("#evBar"); if (bar.getBoundingClientRect().top < 0 || window.scrollY > bar.offsetTop) window.scrollTo({ top: bar.offsetTop - 60, behavior: "smooth" });
+    });
+
+    // lightbox (per event, with thumbnails)
+    const lb = $("#lb"), img = $("#lbImg");
     $("#lbClose").innerHTML = icon("x"); $("#lbPrev").innerHTML = icon("left"); $("#lbNext").innerHTML = icon("chevron");
-    let cur = 0, last = null;
-    const show = (i) => { cur = (i + flat.length) % flat.length; img.src = flat[cur].src; img.alt = flat[cur].alt; cap.textContent = `${flat[cur].cap}  ·  ${cur + 1} / ${flat.length}`; };
-    const open = (i) => { last = document.activeElement; show(i); lb.hidden = false; document.body.style.overflow = "hidden"; $("#lbClose").focus(); };
-    const close = () => { lb.hidden = true; document.body.style.overflow = ""; if (last) last.focus(); };
-    $$(".ev-tile").forEach((b) => b.addEventListener("click", () => open(+b.dataset.i)));
+    let E = null, cur = 0, last = null;
+    const show = (k) => {
+      const ps = E.photos; cur = (k + ps.length) % ps.length; const p = ps[cur];
+      img.classList.remove("ready"); img.onload = () => img.classList.add("ready");
+      img.src = big(p); img.alt = p.alt || E.title;
+      $("#lbCap").textContent = p.alt || "";
+      $("#lbCount").textContent = `${cur + 1} / ${ps.length}`;
+      $$(".lb-thumbs button").forEach((t, j) => { t.classList.toggle("on", j === cur); if (j === cur) t.scrollIntoView({ block: "nearest", inline: "center" }); });
+      [cur + 1, cur - 1].forEach((j) => { const q = ps[(j + ps.length) % ps.length]; new Image().src = big(q); });
+    };
+    const open = (ei, k) => {
+      E = EV[ei]; last = document.activeElement;
+      $("#lbTitle").textContent = E.title;
+      $("#lbThumbs").innerHTML = E.photos.map((p, j) => `<button aria-label="Photo ${j + 1}"><img src="${th(p)}" alt=""></button>`).join("");
+      $$(".lb-thumbs button").forEach((t, j) => t.addEventListener("click", () => show(j)));
+      $("#lbThumbs").hidden = E.photos.length < 2; $("#lbPrev").hidden = $("#lbNext").hidden = E.photos.length < 2;
+      lb.hidden = false; document.body.style.overflow = "hidden"; show(k); $("#lbClose").focus();
+    };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ""; img.src = ""; if (last) last.focus(); };
+    $("#evList").addEventListener("click", (ev) => { const b = ev.target.closest("[data-e]"); if (b) open(+b.dataset.e, +b.dataset.k); });
     $("#lbClose").addEventListener("click", close);
     $("#lbPrev").addEventListener("click", () => show(cur - 1));
     $("#lbNext").addEventListener("click", () => show(cur + 1));
-    lb.addEventListener("click", (e) => { if (e.target === lb) close(); });
-    document.addEventListener("keydown", (e) => {
+    lb.addEventListener("click", (ev) => { if (ev.target.classList.contains("lb-stage")) close(); });
+    document.addEventListener("keydown", (ev) => {
       if (lb.hidden) return;
-      if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1);
+      if (ev.key === "Escape") close(); else if (ev.key === "ArrowLeft") show(cur - 1); else if (ev.key === "ArrowRight") show(cur + 1);
     });
     let sx = null;
-    lb.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
-    lb.addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
+    $(".lb-stage").addEventListener("touchstart", (ev) => { sx = ev.touches[0].clientX; }, { passive: true });
+    $(".lb-stage").addEventListener("touchend", (ev) => { if (sx == null) return; const dx = ev.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
     A.reveal();
+    if (location.hash) { const t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(() => t.scrollIntoView(), 100); }
   }
   function notfound() { A.header(""); A.footer(); }
   function info() {
