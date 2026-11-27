@@ -141,11 +141,66 @@
   }
 
   /* ================= CATALOG ================= */
+  const WA = () => "https://wa.me/2" + String(SITE.contactPhone || "").replace(/[^0-9]/g, "");
+  const STATUS = { upcoming: "Upcoming", open: "Registration open", soon: "Coming soon" };
+  function infoCard(c) {
+    return `<article class="ccard poster reveal">
+      <a class="ccard-cover poster" href="${courseUrl(c)}" aria-label="${esc(c.title)}">
+        <img src="assets/img/courses/${esc(c.cover)}" alt="${esc(c.title)} poster" loading="lazy">
+        ${c.badge ? `<span class="cc-tag chip chip-red">${esc(c.badge)}</span>` : ""}
+      </a>
+      <div class="ccard-body">
+        <h3 class="ccard-h">${esc(c.title)}</h3>
+        <p>${esc(c.subtitle || "")}</p>
+        <div class="ccard-meta">${(c.facts || []).slice(0, 2).map(([k, v]) => `<span>${icon(/length|when/i.test(k) ? "clock" : "spark")}${esc(v)}</span>`).join("")}</div>
+        <div class="ccard-foot">
+          <span class="cstatus">${esc(STATUS[c.status] || "")}</span>
+          <a class="btn btn-dark btn-sm" href="${courseUrl(c)}">Details ${icon("arrow")}</a>
+        </div>
+      </div>
+    </article>`;
+  }
+  function infoCourse(c, root) {
+    const onsite = c.mode === "onsite";
+    root.innerHTML = `
+      <section class="page-head course-hero">
+        <div class="wrap">
+          <div class="crumbs"><a href="index.html">Home</a>${icon("chevron")}<a href="${onsite ? "onsite-courses.html" : "courses.html"}">${onsite ? "Onsite Courses" : "Online Courses"}</a>${icon("chevron")}<span>${esc(c.title)}</span></div>
+          <h1>${esc(c.title)}</h1>
+          <p>${esc(c.subtitle || "")}</p>
+          <div class="facts">${(c.facts || []).map(([k, v]) => `<span>${icon(/length|when/i.test(k) ? "clock" : /format/i.test(k) ? "globe" : "spark")}<b style="font-weight:500;color:rgba(255,255,255,.5)">${esc(k)}:</b> ${esc(v)}</span>`).join("")}</div>
+          <div class="tags">${(c.tags || []).map((t) => `<span class="chip chip-dark">${esc(t)}</span>`).join("")}</div>
+        </div>
+      </section>
+      <div class="wrap course-layout">
+        <div class="course-main">
+          <section class="panel"><h2>About this course</h2><p>${esc(c.description || "")}</p></section>
+          ${(c.outcomes || []).length ? `<section class="panel"><h2>${esc(c.outcomesTitle || "What you'll learn")}</h2><ul class="clean outcomes">${c.outcomes.map((o) => `<li>${icon("check")}<span>${esc(o)}</span></li>`).join("")}</ul></section>` : ""}
+          ${c.bonus ? `<section class="panel bonus"><span class="bonus-ico">${icon("spark")}</span><div><h2 style="font-size:1.3rem;margin-bottom:6px">Bonus</h2><p>${esc(c.bonus)} for every registered student.</p></div></section>` : ""}
+          ${c.graduates ? `<a class="panel grad-link" href="${esc(c.graduates)}"><div><h2 style="font-size:1.3rem;margin-bottom:6px">Meet the graduates</h2><p>See students who completed this ${onsite ? "training" : "course"}.</p></div>${icon("arrow")}</a>` : ""}
+          <section class="panel"><h2 style="font-size:1.3rem">Details and dates</h2><p>For the schedule, fees and registration, message us on WhatsApp at <b>${esc(SITE.contactPhone || "")}</b>.</p></section>
+        </div>
+        <aside class="side">
+          <div class="side-card">
+            <img class="side-poster" src="assets/img/courses/${esc(c.cover)}" alt="${esc(c.title)} poster">
+            <div class="side-body">
+              ${c.badge ? `<span class="chip chip-red">${esc(c.badge)}</span>` : ""}
+              <p class="muted" style="margin-top:12px;font-size:.9rem">${esc(STATUS[c.status] || "")}</p>
+              <a class="btn btn-primary btn-lg" href="${WA()}" target="_blank" rel="noopener">${icon("chat")} Register on WhatsApp</a>
+              <a class="contact-line" href="${A.phoneHref(SITE.contactPhone)}">${icon("chat")}<span>Or call us<b>${esc(SITE.contactPhone || "")}</b></span></a>
+            </div>
+          </div>
+        </aside>
+      </div>
+      <div style="height:80px"></div>`;
+  }
   function catalog() {
-    A.header("courses");
+    const MODE = document.body.dataset.mode || "online";
+    A.header(MODE === "onsite" ? "onsite" : "courses");
     A.footer();
+    const LIST = COURSES.filter((c) => (c.mode || "online") === MODE);
     const grid = $("#courseGrid"), input = $("#q"), filt = $("#filters");
-    const tags = Array.from(new Set(COURSES.flatMap((c) => c.tags || [])));
+    const tags = Array.from(new Set(LIST.flatMap((c) => c.tags || [])));
     let active = "All";
     filt.innerHTML = ["All"].concat(tags).map((t) => `<button class="filter ${t === "All" ? "is-on" : ""}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
     filt.addEventListener("click", (e) => {
@@ -158,6 +213,7 @@
     const pre = qs("q"); if (pre) input.value = pre;
 
     function card(c, i) {
+      if (!A.allLessons(c).length) return infoCard(c);
       const st = A.courseStats(c), p = progress.percent(c), go = resumeTarget(c);
       const soon = c.status === "soon";
       return `<article class="ccard reveal">
@@ -176,7 +232,7 @@
           </div>
           ${p > 0 ? `<div class="bar" title="${p}% complete"><i style="width:${p}%"></i></div>` : ""}
           <div class="ccard-foot">
-            <span class="price">${esc(c.price || "Free")}</span>
+            <span class="price">${esc(c.price || "")}</span>
             <a class="btn btn-dark btn-sm" href="${soon ? courseUrl(c) : p > 0 ? go.href : courseUrl(c)}">${soon ? "Details" : p > 0 ? "Continue" : "View course"} ${icon("arrow")}</a>
           </div>
         </div>
@@ -184,7 +240,7 @@
     }
     function render() {
       const q = input.value.trim().toLowerCase();
-      const list = COURSES.filter((c) => {
+      const list = LIST.filter((c) => {
         if (active !== "All" && (c.tags || []).indexOf(active) === -1) return false;
         if (!q) return true;
         const hay = [c.title, c.titleAr, c.subtitle, c.description, (c.tags || []).join(" ")]
@@ -192,7 +248,7 @@
         return hay.indexOf(q) > -1;
       });
       grid.innerHTML = list.length
-        ? list.map(card).join("") + (q || active !== "All" ? "" : `<div class="ccard soon reveal">${icon("spark")}<h3>More courses on the way</h3><p class="muted" style="margin-top:8px;max-width:260px">New courses on AI in science are in production. Follow us to hear first.</p></div>`)
+        ? list.map(card).join("") + (q || active !== "All" || list.length % 3 === 0 ? "" : `<div class="ccard soon reveal">${icon("spark")}<h3>More courses on the way</h3><p class="muted" style="margin-top:8px;max-width:260px">New courses on AI in science are in production. Follow us to hear first.</p></div>`)
         : `<div class="empty">No courses match “${esc(q)}”. Try another keyword.</div>`;
       $$(".ccard-cover canvas", grid).forEach((cv) => window.AIBHelix(cv, { cx: 0.62, cy: 0.42, angle: -0.5, amp: 0.13, turns: 2.4, pairs: 28, particles: 16, link: 90, interactive: false, seed: +cv.dataset.seed }));
       A.reveal();
@@ -208,6 +264,7 @@
     const c = A.getCourse(qs("id")) || featured;
     if (!c) { root.innerHTML = `<div class="wrap section"><div class="empty">Course not found. <a href="courses.html" style="color:var(--red)">Browse all courses</a>.</div></div>`; return; }
     document.title = `${c.title} — ${SITE.name}`;
+    if (!A.allLessons(c).length) return infoCourse(c, root);
     const st = A.courseStats(c);
     const go = resumeTarget(c);
     const p = progress.get(c.id);
