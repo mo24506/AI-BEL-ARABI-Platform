@@ -928,6 +928,32 @@
     lb.addEventListener("click", (e) => { if (e.target.classList.contains("lb-stage")) close(); });
     document.addEventListener("keydown", (e) => { if (lb.hidden) return; if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
   }
+  function hackathon() {
+    A.header("hackathon");
+    A.footer();
+    $("#rmdWa").href = WA();
+    $("#rhSky").innerHTML = Array.from({ length: 60 }, (_, i) => `<i style="left:${(i * 37) % 100}%;top:${(i * 53) % 90}%;--s:${1 + (i % 3)}px;--d:${(i % 7) * .4}s"></i>`).join("");
+    const lantern = `<svg viewBox="0 0 40 90" aria-hidden="true"><line x1="20" y1="0" x2="20" y2="18" stroke="currentColor" stroke-width="1"/><path d="M14 18h12l3 6H11z" fill="currentColor"/><path d="M11 24h18l-2 40H13z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 30v28M24 30v28M20 28v32" stroke="currentColor" stroke-width="1.2"/><path d="M13 64h14l-3 7h-8z" fill="currentColor"/><circle cx="20" cy="44" r="5" fill="#ffd27a" opacity=".85"/></svg>`;
+    $("#rhLanterns").innerHTML = [0, 1, 2, 3].map((i) => `<span class="ln l${i}">${lantern}</span>`).join("");
+    const pod = [
+      { place: 2, sup: "nd", team: "Medo", img: "2026-2nd-medo.jpg" },
+      { place: 1, sup: "st", team: "Marvaiotecch", img: "2026-1st-marvaiotecch.jpg" },
+      { place: 3, sup: "rd", team: "She-quence", img: "2026-3rd-shequence.jpg" }
+    ];
+    $("#podium").innerHTML = pod.map((p) => `<div class="pod p${p.place}">
+      <button class="pod-photo" data-img="${p.img}" data-cap="${esc(p.team)} Team · ${p.place}${p.sup} place"><img src="assets/img/hackathon/${p.img}" alt="${esc(p.team)} team, ${p.place}${p.sup} place" loading="lazy"></button>
+      <div class="pod-name"><b>${esc(p.team)}</b><span>Team</span></div>
+      <div class="pod-step"><span>${p.place}<sup>${p.sup}</sup></span><small>place</small></div></div>`).join("");
+    const D = { 2: ["The Eagle", "Bio Besties", "Gene Hunters"], 3: ["Bio Twins", "Leaders Team", "The Cell"] };
+    $$(".medals").forEach((ol) => { ol.innerHTML = D[ol.dataset.day].map((t, i) => `<li class="m${i + 1}"><span>${i + 1}</span>${esc(t)}</li>`).join(""); });
+    const lb = $("#lb"), img = $("#lbImg"); let last = null;
+    $("#lbClose").innerHTML = icon("x");
+    const close = () => { lb.hidden = true; document.body.style.overflow = ""; img.src = ""; if (last) last.focus(); };
+    document.addEventListener("click", (e) => { const b = e.target.closest("[data-img]"); if (!b || b.closest("#lb")) return; last = b; img.src = "assets/img/hackathon/" + b.dataset.img; img.classList.add("ready"); $("#lbTitle").textContent = "Ramadan Biotech Hackathon"; $("#lbCap").textContent = b.dataset.cap || ""; $("#lbCount").textContent = ""; lb.hidden = false; document.body.style.overflow = "hidden"; $("#lbClose").focus(); });
+    $("#lbClose").addEventListener("click", close);
+    lb.addEventListener("click", (e) => { if (e.target.classList.contains("lb-stage")) close(); });
+    document.addEventListener("keydown", (e) => { if (!lb.hidden && e.key === "Escape") close(); });
+  }
   function notfound() { A.header(""); A.footer(); }
   function info() {
     A.header(document.body.dataset.key || "");
@@ -938,5 +964,5 @@
     A.reveal();
   }
 
-  ({ home, catalog, course, learn, notfound, info, events, testimonials, students, onsite, webinars }[page] || function () {})();
+  ({ home, catalog, course, learn, notfound, info, events, testimonials, students, onsite, webinars, hackathon }[page] || function () {})();
 })();
