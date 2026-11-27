@@ -735,6 +735,56 @@
     document.addEventListener("keydown", (e) => { if (lb.hidden) return; if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
     if (featured) $("#tCta").href = courseUrl(featured);
   }
+  function students() {
+    A.header("students");
+    A.footer();
+    const P = window.STUDENT_PROGRAMS || [], ST = window.STUDENT_STATS || {};
+    const big = (f) => "assets/img/students/" + f, th = (f) => "assets/img/students/thumbs/" + f;
+    $("#shStats").innerHTML = [[ST.graduates, "graduates celebrated"], [ST.programs || P.length, "programs"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
+    const fan = ["junior-04.jpg", "junior-15.jpg", "junior-01.jpg"];
+    $("#shFan").innerHTML = fan.map((f, i) => `<figure class="pol f${i}"><img src="${th(f)}" alt=""><figcaption>Class of AI Bel Araby</figcaption></figure>`).join("");
+    $("#shIndex").innerHTML = P.map((p, i) => `<a href="#${p.id}"><span>${pad(i + 1)}</span>${esc(p.name)}<i>${p.photos.length}</i></a>`).join("");
+    const rot = [-2.2, 1.6, -1, 2.4, -1.8, 1.1, -2.6, 1.9];
+    $("#shChapters").innerHTML = P.map((p, i) => {
+      let wall;
+      if (p.style === "poster") wall = `<div class="sw-posters">${p.photos.map((ph, k) => `<button class="sw-poster" data-p="${i}" data-k="${k}" aria-label="${esc(ph.name || p.name)}"><img src="${th(ph.src)}" alt="${esc((ph.name ? ph.name + ", " : "") + p.name + " graduate")}" loading="lazy"></button>`).join("")}</div>`;
+      else if (p.style === "wide") wall = `<div class="sw-wide">${p.photos.map((ph, k) => `<button class="pol wide" data-p="${i}" data-k="${k}"><img src="${big(ph.src)}" alt="${esc(ph.caption || p.name)}" loading="lazy"><figcaption>${esc(ph.caption || p.name)}</figcaption></button>`).join("")}</div>`;
+      else wall = `<div class="sw-pols ${p.photos.length < 3 ? "few" : ""}">${p.photos.map((ph, k) => `<button class="pol" style="--r:${rot[k % rot.length]}deg" data-p="${i}" data-k="${k}" aria-label="Open photo"><img src="${th(ph.src)}" alt="${esc(p.name)} graduate" loading="lazy"><figcaption>${esc(ph.name || p.name)}</figcaption></button>`).join("")}</div>`;
+      return `<section class="sc ${i % 2 ? "alt" : ""}" id="${esc(p.id)}">
+        <div class="wrap sc-grid">
+          <header class="sc-head">
+            <span class="sc-num">${pad(i + 1)}</span>
+            <span class="sc-kind">${esc(p.kind)}</span>
+            <h2>${esc(p.name)}</h2>
+            <p>${esc(p.about)}</p>
+            <div class="sc-count"><b>${p.photos.length}</b>${p.style === "wide" ? "graduation photo" : p.photos.length > 1 ? "graduates" : "graduate"}</div>
+            ${p.cover ? `<button class="sc-cover" data-cover="${esc(p.cover)}" data-name="${esc(p.name)}"><img src="${th(p.cover)}" alt="${esc(p.name)} program poster" loading="lazy"></button>` : ""}
+          </header>
+          ${wall}
+        </div>
+      </section>`;
+    }).join("");
+    const lb = $("#lb"), img = $("#lbImg");
+    $("#lbClose").innerHTML = icon("x"); $("#lbPrev").innerHTML = icon("left"); $("#lbNext").innerHTML = icon("chevron");
+    let set = [], cur = 0, last = null, title = "";
+    const show = (k) => { cur = (k + set.length) % set.length; img.classList.remove("ready"); img.onload = () => img.classList.add("ready"); img.src = big(set[cur].src); img.alt = set[cur].cap; $("#lbCap").textContent = set[cur].cap; $("#lbCount").textContent = set.length > 1 ? `${cur + 1} / ${set.length}` : ""; };
+    const open = (items, t, k) => { set = items; last = document.activeElement; $("#lbTitle").textContent = t; $("#lbPrev").hidden = $("#lbNext").hidden = items.length < 2; lb.hidden = false; document.body.style.overflow = "hidden"; show(k); $("#lbClose").focus(); };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ""; img.src = ""; if (last) last.focus(); };
+    $("#shChapters").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-p],[data-cover]"); if (!b) return;
+      if (b.dataset.cover) return open([{ src: b.dataset.cover, cap: b.dataset.name }], b.dataset.name, 0);
+      const p = P[+b.dataset.p];
+      open(p.photos.map((ph) => ({ src: ph.src, cap: ph.name || ph.caption || p.name + " graduate" })), p.name, +b.dataset.k);
+    });
+    $("#lbClose").addEventListener("click", close);
+    $("#lbPrev").addEventListener("click", () => show(cur - 1));
+    $("#lbNext").addEventListener("click", () => show(cur + 1));
+    lb.addEventListener("click", (e) => { if (e.target.classList.contains("lb-stage")) close(); });
+    document.addEventListener("keydown", (e) => { if (lb.hidden) return; if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1); });
+    let sx = null; $(".lb-stage").addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    $(".lb-stage").addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
+    if (featured) $("#shCta").href = courseUrl(featured);
+  }
   function notfound() { A.header(""); A.footer(); }
   function info() {
     A.header(document.body.dataset.key || "");
@@ -745,5 +795,5 @@
     A.reveal();
   }
 
-  ({ home, catalog, course, learn, notfound, info, events, testimonials }[page] || function () {})();
+  ({ home, catalog, course, learn, notfound, info, events, testimonials, students }[page] || function () {})();
 })();

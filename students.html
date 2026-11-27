@@ -19,34 +19,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body data-page="info" data-key="students">
+<body data-page="students" data-key="students" class="yb">
 <main id="main">
-  <section class="page-head">
-    <div class="wrap">
-      <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Our Beloved Students</span></div>
-      <h1>Our Beloved Students</h1>
-      <p>Celebrating the students of AI Bel Araby.</p>
-    </div>
-  </section>
-  <section class="section" style="padding-top:56px">
-    <div class="wrap">
-      <div class="soon-card reveal">
-        <div class="soon-ico" data-icon="users"></div>
-        <div>
-          <span class="eyebrow">Coming soon</span>
-          <h2 style="margin-top:12px">Student highlights are coming soon</h2>
-          <p>Stories, projects and achievements of our students will be featured here.</p>
-          <div class="actions">
-            <a class="btn btn-primary" href="courses.html">Explore online courses</a>
-            <a class="btn btn-ghost" data-phone href="#" hidden></a>
-          </div>
-        </div>
+  <section class="sh">
+    <div class="wrap sh-inner">
+      <div class="sh-text">
+        <div class="crumbs dark"><a href="index.html">Home</a><span>/</span><span>Our Beloved Students</span></div>
+        <span class="sh-badge">Class of AI Bel Araby</span>
+        <h1>Our Beloved<br><em>Students</em></h1>
+        <p>Every certificate is a story of curiosity, hard work and a new skill. These are the graduates who learned with us.</p>
+        <div class="sh-stats" id="shStats"></div>
       </div>
-      <div class="soon-grid" aria-hidden="true"><div class="soon-ph">Content coming soon</div><div class="soon-ph">Content coming soon</div><div class="soon-ph">Content coming soon</div></div>
+      <div class="sh-fan" id="shFan" aria-hidden="true"></div>
+    </div>
+    <nav class="sh-index wrap" id="shIndex" aria-label="Programs"></nav>
+  </section>
+  <div id="shChapters"></div>
+  <section class="section" style="padding-top:40px">
+    <div class="wrap">
+      <div class="sh-next">
+        <div class="sh-next-frame"><span>Your photo<br>could be next</span></div>
+        <div><h2>Join the next class.</h2><p>Start the AI Meets Biotech course and earn your certificate.</p>
+          <a class="btn btn-primary btn-lg" id="shCta" href="courses.html">Start learning</a></div>
+      </div>
     </div>
   </section>
 </main>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-top"><div><b id="lbTitle"></b><span id="lbCount"></span></div><button class="lb-btn" id="lbClose" aria-label="Close"></button></div>
+  <div class="lb-stage"><button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous"></button><figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure><button class="lb-btn lb-next" id="lbNext" aria-label="Next"></button></div>
+</div>
 <script src="assets/js/courses.js"></script>
+<script src="assets/js/students.js"></script>
 <script src="assets/js/core.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
