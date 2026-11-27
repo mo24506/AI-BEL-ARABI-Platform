@@ -4,7 +4,7 @@
    One block per program. Photos live in assets/img/students/
    (smaller copies in thumbs/). style: "poster" | "polaroid" | "wide"
    ===================================================================== */
-window.STUDENT_STATS = { graduates: 27, programs: 4 };
+window.STUDENT_STATS = { graduates: "2000+", programs: 18 };
 
 window.STUDENT_PROGRAMS = [
   {

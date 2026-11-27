@@ -797,7 +797,7 @@
     A.footer();
     const P = window.STUDENT_PROGRAMS || [], ST = window.STUDENT_STATS || {};
     const big = (f) => "assets/img/students/" + f, th = (f) => "assets/img/students/thumbs/" + f;
-    $("#shStats").innerHTML = [[ST.graduates, "graduates celebrated"], [ST.programs || P.length, "programs"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
+    $("#shStats").innerHTML = [[ST.graduates, "students celebrated"], [ST.programs || P.length, "programs"]].map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join("");
     const fan = ["junior-04.jpg", "junior-15.jpg", "junior-01.jpg"];
     $("#shFan").innerHTML = fan.map((f, i) => `<figure class="pol f${i}"><img src="${th(f)}" alt=""><figcaption>Class of AI Bel Araby</figcaption></figure>`).join("");
     $("#shIndex").innerHTML = P.map((p, i) => `<a href="#${p.id}"><span>${pad(i + 1)}</span>${esc(p.name)}<i>${p.photos.length}</i></a>`).join("");
