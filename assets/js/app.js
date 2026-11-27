@@ -585,6 +585,57 @@
   }
 
   /* ================= 404 ================= */
+  function events() {
+    A.header("events");
+    A.footer();
+    const EV = window.EVENTS || [];
+    const total = EV.reduce((a, e) => a + e.photos.length, 0);
+    $("#evStats").innerHTML = `<span><b>${EV.length}</b> events</span><span><b>${total}</b> photos</span>`;
+    const flat = [];
+    $("#evList").innerHTML = EV.map((e, i) => {
+      const n = e.photos.length;
+      const cls = n === 1 ? "n1" : n === 2 ? "n2" : n === 3 ? "n3" : "nm";
+      const cells = 4 + (n - 1), rem = cls === "nm" ? cells % 3 : 0;
+      const tiles = e.photos.map((ph, k) => {
+        const span = rem && k === n - 1 ? (rem === 2 ? " span2" : " span3") : "";
+        const mfull = cls === "nm" && (n - 1) % 2 === 1 && k === n - 1 ? " mfull" : "";
+        const idx = flat.push({ src: "assets/img/events/" + ph.src, alt: ph.alt || e.title, cap: `${e.title}${ph.alt ? " · " + ph.alt : ""}` }) - 1;
+        return `<button class="ev-tile${ph.fit === "contain" ? " contain" : ""}${span}${mfull}" data-i="${idx}" aria-label="Open photo: ${esc(ph.alt || e.title)}">
+          <img src="assets/img/events/${esc(ph.src)}" alt="${esc(ph.alt || e.title)}" loading="${i < 2 ? "eager" : "lazy"}">
+          <span class="ev-zoom">${icon("expand")}</span></button>`;
+      }).join("");
+      return `<article class="ev reveal ${i % 2 ? "flip" : ""}" id="${esc(e.id)}">
+        <div class="ev-meta">
+          <span class="ev-num">${pad(i + 1)}</span>
+          <div class="ev-chips">${e.date ? `<span class="chip chip-red">${icon("clock")} ${esc(e.date)}</span>` : ""}${e.place ? `<span class="chip">${icon("globe")} ${esc(e.place)}</span>` : ""}</div>
+          <h2>${esc(e.title)}</h2>
+          <p>${esc(e.caption)}</p>
+          <span class="ev-count">${n} photo${n > 1 ? "s" : ""}</span>
+        </div>
+        <div class="ev-collage ${cls}">${tiles}</div>
+      </article>`;
+    }).join("");
+    // lightbox
+    const lb = $("#lb"), img = $("#lbImg"), cap = $("#lbCap");
+    $("#lbClose").innerHTML = icon("x"); $("#lbPrev").innerHTML = icon("left"); $("#lbNext").innerHTML = icon("chevron");
+    let cur = 0, last = null;
+    const show = (i) => { cur = (i + flat.length) % flat.length; img.src = flat[cur].src; img.alt = flat[cur].alt; cap.textContent = `${flat[cur].cap}  ·  ${cur + 1} / ${flat.length}`; };
+    const open = (i) => { last = document.activeElement; show(i); lb.hidden = false; document.body.style.overflow = "hidden"; $("#lbClose").focus(); };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ""; if (last) last.focus(); };
+    $$(".ev-tile").forEach((b) => b.addEventListener("click", () => open(+b.dataset.i)));
+    $("#lbClose").addEventListener("click", close);
+    $("#lbPrev").addEventListener("click", () => show(cur - 1));
+    $("#lbNext").addEventListener("click", () => show(cur + 1));
+    lb.addEventListener("click", (e) => { if (e.target === lb) close(); });
+    document.addEventListener("keydown", (e) => {
+      if (lb.hidden) return;
+      if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1);
+    });
+    let sx = null;
+    lb.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
+    A.reveal();
+  }
   function notfound() { A.header(""); A.footer(); }
   function info() {
     A.header(document.body.dataset.key || "");
@@ -595,5 +646,5 @@
     A.reveal();
   }
 
-  ({ home, catalog, course, learn, notfound, info }[page] || function () {})();
+  ({ home, catalog, course, learn, notfound, info, events }[page] || function () {})();
 })();
