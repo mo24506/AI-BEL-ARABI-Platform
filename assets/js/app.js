@@ -392,7 +392,7 @@
     const sb = $("#shareBtn");
     if (sb) sb.addEventListener("click", () => navigator.share({ title: c.title, text: c.subtitle, url: location.href.split("#")[0] }).catch(() => {}));
     // style.css scroll-margin for anchors
-    $$(".panel, .module", root).forEach((s) => (s.style.scrollMarginTop = "150px"));
+    $$(".panel, .module", root).forEach((s) => (s.style.scrollMarginTop = "200px"));
   }
 
   /* ================= LEARN (player) ================= */
@@ -586,6 +586,14 @@
 
   /* ================= 404 ================= */
   function notfound() { A.header(""); A.footer(); }
+  function info() {
+    A.header(document.body.dataset.key || "");
+    A.footer();
+    fillIcons(document);
+    const ph = $("[data-phone]");
+    if (ph && SITE.contactPhone) { ph.hidden = false; ph.href = A.phoneHref(SITE.contactPhone); ph.innerHTML = `${icon("chat")} For details: ${esc(SITE.contactPhone)}`; }
+    A.reveal();
+  }
 
-  ({ home, catalog, course, learn, notfound }[page] || function () {})();
+  ({ home, catalog, course, learn, notfound, info }[page] || function () {})();
 })();

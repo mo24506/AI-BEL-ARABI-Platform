@@ -573,3 +573,35 @@ body.learn .acc.commercial { background: rgba(191, 24, 42, 0.18); color: var(--r
 .demo p { margin-top: 6px; color: #fff; }
 .takeaway { margin: 30px 0 0; padding: 22px 26px; border-inline-start: 3px solid var(--red); background: var(--ink-2); border-radius: 0 var(--r) var(--r) 0; }
 .takeaway p { margin-top: 8px; font-family: var(--f-display); font-size: 1.3rem; line-height: 1.35; color: #fff; letter-spacing: -0.01em; }
+
+/* ---------- two-row navigation ---------- */
+.nav { height: 70px; }
+.nav-slogan { flex: 1; text-align: center; font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.subnav { border-top: 1px solid var(--line); }
+.subnav-inner { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; padding: 7px 0; justify-content: space-between; }
+.subnav-inner::-webkit-scrollbar { display: none; }
+.subnav a { flex: none; padding: 0.5em 0.85em; border-radius: 999px; font-size: 0.88rem; font-weight: 500; color: var(--muted); white-space: nowrap; transition: color 0.15s, background 0.15s; }
+.subnav a:hover { color: var(--text); background: rgba(15, 15, 17, 0.05); }
+.subnav a.is-active { color: #fff; background: var(--ink); }
+.subnav a[href="hackathon.html"]:not(.is-active) { color: var(--red); }
+.mobile-menu a.is-active { color: var(--red); }
+.tabs { top: 132px; }
+.side { top: 142px; }
+@media (max-width: 1180px) { .subnav-inner { justify-content: flex-start; } }
+@media (max-width: 900px) {
+  .nav-slogan { display: none; }
+  .nav { height: 62px; }
+  .subnav { display: none; }
+  .tabs { top: 70px; }
+}
+
+/* ---------- coming-soon pages ---------- */
+.soon-card { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 40px; box-shadow: var(--shadow); }
+.soon-ico { width: 84px; height: 84px; border-radius: 22px; background: var(--red-50); color: var(--red); display: grid; place-items: center; border: 1px solid #f4ccd1; }
+.soon-ico .ico { width: 40px; height: 40px; }
+.soon-card h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); margin-bottom: 10px; }
+.soon-card p { color: var(--muted); max-width: 620px; }
+.soon-card .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.soon-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 24px; }
+.soon-ph { border: 1.5px dashed var(--line); border-radius: var(--r-lg); min-height: 180px; display: grid; place-items: center; color: var(--muted-2); font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; background: repeating-linear-gradient(135deg, transparent 0 12px, rgba(15,15,17,.025) 12px 24px); }
+@media (max-width: 760px) { .soon-card { grid-template-columns: 1fr; padding: 28px; } .soon-grid { grid-template-columns: 1fr; } .soon-ph { min-height: 120px; } }

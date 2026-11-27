@@ -193,15 +193,20 @@
   const typeIcon = (t) => ({ video: "play", lab: "lab", reading: "reading", quiz: "target" }[t] || "play");
 
   /* ---------- page chrome ---------- */
+  const NAV = [
+    ["index.html", "Home", "home"],
+    ["courses.html", "Online Courses", "courses"],
+    ["onsite-courses.html", "Onsite Courses", "onsite"],
+    ["events.html", "Events", "events"],
+    ["webinars.html", "Webinars", "webinars"],
+    ["testimonials.html", "Testimonials", "testimonials"],
+    ["hackathon.html", "RAMADAN Biotech Annual Hackathon", "hackathon"],
+    ["students.html", "Our Beloved Students", "students"],
+    ["team.html", "Meet the Team", "team"]
+  ];
   function header(active) {
     const featured = COURSES.find((c) => c.featured) || COURSES[0];
-    const links = [
-      ["index.html", "Home", "home"],
-      ["courses.html", "Courses", "courses"],
-      ["index.html#tracks", "Focus areas", "tracks"],
-      ["index.html#how", "How it works", "how"],
-      ["index.html#faq", "FAQ", "faq"]
-    ];
+    const links = NAV;
     const el = document.createElement("header");
     el.className = "site-header";
     el.innerHTML = `
@@ -209,17 +214,22 @@
         <a class="brand" href="index.html" aria-label="${esc(SITE.name)} home">
           <img src="assets/img/logo.png" alt="${esc(SITE.name)}" class="brand-logo" width="140" height="63">
         </a>
-        <nav class="nav-links" aria-label="Main">
-          ${links.map(([h, t, k]) => `<a href="${h}" class="${k === active ? "is-active" : ""}">${t}</a>`).join("")}
-        </nav>
+        <span class="nav-slogan">${esc(SITE.slogan || "")}</span>
         <div class="nav-cta">
           ${featured ? `<a class="btn btn-primary btn-sm" href="course.html?id=${encodeURIComponent(featured.id)}">Start learning ${icon("arrow")}</a>` : ""}
           <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">${icon("menu")}</button>
         </div>
       </div>
+      <nav class="subnav" aria-label="Main">
+        <div class="wrap subnav-inner">
+          ${links.map(([h, t, k]) => `<a href="${h}" class="${k === active ? "is-active" : ""}" ${k === active ? 'aria-current="page"' : ""}>${t}</a>`).join("")}
+        </div>
+      </nav>
       <div class="mobile-menu" hidden>
-        ${links.map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}
+        ${links.map(([h, t, k]) => `<a href="${h}" class="${k === active ? "is-active" : ""}">${t}</a>`).join("")}
       </div>`;
+    const cur = el.querySelector(".subnav a.is-active");
+    if (cur) requestAnimationFrame(() => cur.scrollIntoView({ block: "nearest", inline: "center" }));
     document.body.prepend(el);
     const btn = $(".nav-toggle", el), mm = $(".mobile-menu", el);
     btn.addEventListener("click", () => {
@@ -256,14 +266,12 @@
         </div>
         <div>
           <h4>Learn</h4>
-          <a href="courses.html">All courses</a>
+          <a href="courses.html">Online Courses</a>
           ${COURSES.slice(0, 4).map((c) => `<a href="course.html?id=${encodeURIComponent(c.id)}">${esc(c.title)}</a>`).join("")}
         </div>
         <div>
-          <h4>Platform</h4>
-          <a href="index.html#tracks">Focus areas</a>
-          <a href="index.html#how">How it works</a>
-          <a href="index.html#faq">FAQ</a>
+          <h4>Community</h4>
+          ${NAV.slice(2).map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}
         </div>
         <div>
           <h4>Contact</h4>
